@@ -1,5 +1,6 @@
 package com.example.ghotels.domain.usecase
 
+import android.util.Log
 import com.example.ghotels.data.model.LoginDto
 import com.example.ghotels.data.model.LoginRespuestaDto
 import com.example.ghotels.data.repository.EmpleadoRepository

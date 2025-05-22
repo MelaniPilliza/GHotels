@@ -5,7 +5,7 @@ import com.example.ghotels.domain.model.Empleado
 import com.example.ghotels.domain.model.Rol
 
 data class LoginDto(
-    val correo: String,
+    val mail: String,
     val password: String
 )
 

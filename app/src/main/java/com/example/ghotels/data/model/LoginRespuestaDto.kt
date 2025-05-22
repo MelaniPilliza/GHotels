@@ -4,7 +4,7 @@ data class LoginRespuestaDto(
     val id: Long,
     val nombre: String,
     val apellidos: String,
-    val correo: String,
+    val mail: String,
     val movil: String,
     val dni: String,
     val numeroSeguridadSocial: String,

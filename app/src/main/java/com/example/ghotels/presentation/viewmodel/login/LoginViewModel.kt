@@ -1,5 +1,6 @@
 package com.example.ghotels.presentation.viewmodel.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ghotels.data.model.LoginDto
@@ -26,7 +27,7 @@ class LoginViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    fun updateEmail(value: String) {
+    fun updateMail(value: String) {
         _email.value = value
     }
 
@@ -37,7 +38,7 @@ class LoginViewModel(
     fun doLogin() {
         viewModelScope.launch {
             val loginDto = LoginDto(
-                correo = _email.value,
+                mail = _email.value,
                 password = _password.value
             )
 
@@ -47,9 +48,12 @@ class LoginViewModel(
                 _loginSuccess.value = it
                 _errorMessage.value = null
             }.onFailure {
+                Log.e("LoginViewModel", "Login fallido", it)
                 _errorMessage.value = it.message
                 _loginSuccess.value = null
             }
+
         }
+
     }
 }

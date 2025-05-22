@@ -23,7 +23,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     loginViewModel: LoginViewModel = koinViewModel() // Inyectado con Koin
 ) {
-    val email by loginViewModel.email.collectAsState()
+    val mail by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val errorMessage by loginViewModel.errorMessage.collectAsState()
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
@@ -55,8 +55,8 @@ fun LoginScreen(
             )
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { loginViewModel.updateEmail(it) },
+                value = mail,
+                onValueChange = { loginViewModel.updateMail(it) },
                 label = { Text("Correo electrónico") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),

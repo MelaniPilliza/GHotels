@@ -1,7 +1,7 @@
 package com.example.ghotels.data.model
 
 data class PerfilDto(
-    val correo: String,
+    val mail: String,
     val movil: String,
     val direccion: DireccionDto? = null,
     val nacionalidad: String? = null,
