@@ -5,9 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Work
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -22,14 +26,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ghotels.presentation.ui.components.MenuGHotels
+import com.example.ghotels.presentation.ui.components.TopGHotels
+import com.example.ghotels.presentation.viewmodel.HomeViewModel
+import com.example.ghotels.ui.theme.AppTheme
+import org.koin.androidx.compose.koinViewModel
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import com.example.ghotels.presentation.viewmodel.ProfileViewModel
+import java.util.*
 
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    navController: NavController,
+    profileViewModel: ProfileViewModel = koinViewModel()
+) {
+    val usuario by profileViewModel.usuario.collectAsState()
+    val editandoPerfil = remember { mutableStateOf(false) }
+    val editandoDireccion = remember { mutableStateOf(false) }
+    val editandoContacto = remember { mutableStateOf(false) }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.White
+        color = Color(0xFF002B50)
     ) {
         Box {
             LazyColumn(
@@ -38,57 +60,113 @@ fun ProfileScreen() {
                     .padding(bottom = 70.dp)
             ) {
                 item {
-                    // Encabezado
-                    Row(
+                    TopGHotels(titulo = "Perfil")
+
+                    // Cabecera
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(24.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
-
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Melani Pilliza",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
-                            )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Work,
-                                    contentDescription = "Rol",
-                                    tint = Color.Gray,
-                                    modifier = Modifier.size(16.dp)
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "${usuario?.nombre} ${usuario?.apellidos}",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Color(0xFF002B50)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(text = "Office Cleaner", color = Color.Gray)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Work, contentDescription = null, tint = Color(0xFF00556E), modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(usuario?.rol ?: "", color = Color.Gray, fontSize = 13.sp)
+                                }
+                            }
+                            IconButton(onClick = {
+                                navController.navigate("login") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            }) {
+                                Icon(Icons.Default.ExitToApp, contentDescription = "Salir", tint = Color(0xFF00556E))
                             }
                         }
-                        IconButton(onClick = { /* TODO: ajustes */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Ajustes",
-                                tint = Color.Gray
-                            )
-                        }
                     }
 
-                    // Datos personales
-                    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                        ProfileField("Nombre (legal)", "Melani Alexandra")
-                        ProfileField("Apellido (legal)", "Pilliza Guacapiña")
-                        ProfileField("Correo electrónico", "melanipillizag@gmail.com")
-                        ProfileField("Oficina", "Madrid")
-                        ProfileField("Supervisor", "Teresa ")
-                        ProfileField("Departamento", "Programadora")
-                        ProfileField("Birth date", "01/06/2001")
-                    }
+                    // ----------- DATOS PERSONALES ----------
+                    ProfileSectionCard(
+                        titulo = "Datos personales",
+                        campos = listOf(
+                            "Correo electrónico" to usuario?.mail.orEmpty(),
+                            "Teléfono" to usuario?.movil.orEmpty(),
+                            "Estado civil" to usuario?.estadoCivil.orEmpty(),
+                            "Nacionalidad" to usuario?.nacionalidad.orEmpty(),
+                            "Género" to usuario?.genero.orEmpty()
+                        ),
+                        editando = editandoPerfil.value,
+                        onEditClick = {
+                            if (editandoPerfil.value) profileViewModel.guardarCambios()
+                            editandoPerfil.value = !editandoPerfil.value
+                        },
+                        onValueChange = { campo, valor -> profileViewModel.setCampo(campo, valor) },
+                        keys = listOf("mail", "movil", "estadoCivil", "nacionalidad", "genero")
+                    )
+
+                    // ----------- DIRECCIÓN ----------
+                    ProfileSectionCard(
+                        titulo = "Dirección",
+                        campos = listOf(
+                            "Calle" to usuario?.direccion?.calle.orEmpty(),
+                            "Ciudad" to usuario?.direccion?.ciudad.orEmpty(),
+                            "Provincia" to usuario?.direccion?.provincia.orEmpty(),
+                            "Código Postal" to usuario?.direccion?.codigoPostal.orEmpty(),
+                            "País" to usuario?.direccion?.pais.orEmpty()
+                        ),
+                        editando = editandoDireccion.value,
+                        onEditClick = {
+                            if (editandoDireccion.value) profileViewModel.guardarCambios()
+                            editandoDireccion.value = !editandoDireccion.value
+                        },
+                        onValueChange = { campo, valor -> profileViewModel.setCampo(campo, valor) },
+                        keys = listOf("direccionCalle", "direccionCiudad", "direccionProvincia", "direccionCodigoPostal", "direccionPais")
+                    )
+
+                    // ----------- CONTACTO DE EMERGENCIA ----------
+                    val contacto = usuario?.contactoEmergencia
+                    ProfileSectionCard(
+                        titulo = "Contacto de emergencia",
+                        campos = listOf(
+                            "Nombre" to contacto?.nombre.orEmpty(),
+                            "Teléfono" to contacto?.telefono.orEmpty(),
+                            "Relación" to contacto?.relacion.orEmpty()
+                        ),
+                        editando = editandoContacto.value,
+                        onEditClick = {
+                            if (editandoContacto.value) profileViewModel.guardarCambios()
+                            editandoContacto.value = !editandoContacto.value
+                        },
+                        onValueChange = { campo, valor ->
+                            when (campo) {
+                                "nombre" -> profileViewModel.setContactoEmergencia(valor, contacto?.telefono.orEmpty(), contacto?.relacion.orEmpty())
+                                "telefono" -> profileViewModel.setContactoEmergencia(contacto?.nombre.orEmpty(), valor, contacto?.relacion.orEmpty())
+                                "relacion" -> profileViewModel.setContactoEmergencia(contacto?.nombre.orEmpty(), contacto?.telefono.orEmpty(), valor)
+                            }
+                        },
+                        keys = listOf("nombre", "telefono", "relacion")
+                    )
+
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
 
-            // Menú inferior
             MenuGHotels(
                 selectedIndex = 4,
+                navController = navController,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }
@@ -96,15 +174,75 @@ fun ProfileScreen() {
 }
 
 @Composable
-fun ProfileField(label: String, value: String) {
-    Column(modifier = Modifier.padding(vertical = 12.dp)) {
-        Text(text = label, color = Color.Gray, fontSize = 14.sp)
-        Text(text = value, fontWeight = FontWeight.Medium, fontSize = 16.sp)
+fun ProfileSectionCard(
+    titulo: String,
+    campos: List<Pair<String, String>>,
+    editando: Boolean,
+    onEditClick: () -> Unit,
+    onValueChange: (String, String) -> Unit,
+    keys: List<String>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 12.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally // ✅ centra todo horizontalmente
+        ) {
+            Text(titulo, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF002B50))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            campos.forEachIndexed { index, (label, value) ->
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)) {
+                    Text(text = label, fontSize = 13.sp, color = Color(0xFF00556E))
+                    if (editando) {
+                        OutlinedTextField(
+                            value = value,
+                            onValueChange = { onValueChange(keys[index], it) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+                    } else {
+                        Text(text = value, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onEditClick,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00556E)),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally) // ✅ centra el botón
+                    .padding(top = 4.dp)
+            ) {
+                Text(
+                    text = if (editando) "Guardar" else "Editar",
+                    color = Color.White
+                )
+            }
+        }
     }
 }
+
+
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    AppTheme {
+        val navController = rememberNavController()
+        ProfileScreen(navController = navController)
+    }
 }

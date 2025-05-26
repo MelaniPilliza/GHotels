@@ -4,5 +4,9 @@ data class TipoPermisoDto(
     val id: Long? = null,
     val nombre: String,
     val descripcion: String,
-    val requiereAprobacion: Boolean
+    val requiereAprobacion: Boolean,
+    val ilimitado: Boolean,
+    val diasDisponiblesAnuales: Int? = null
 )
+
+

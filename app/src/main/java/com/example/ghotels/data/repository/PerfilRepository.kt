@@ -7,12 +7,12 @@ import com.example.ghotels.data.source.remote.PerfilServiceClient
 /**
  * Repositorio que permite actualizar los datos personales y de contacto del empleado.
  */
-class PerfilRepository(val service: PerfilServiceClient) {
+class PerfilRepository(val perfilServiceClient: PerfilServiceClient) {
 
 
     suspend fun actualizarPerfil(empleadoId: Long, dto: PerfilDto): Boolean {
         return try {
-            service.actualizarPerfil(empleadoId, dto).isSuccessful
+            perfilServiceClient.actualizarPerfil(empleadoId, dto).isSuccessful
         } catch (e: Exception) {
             false
         }
@@ -20,7 +20,7 @@ class PerfilRepository(val service: PerfilServiceClient) {
 
     suspend fun actualizarContactoEmergencia(empleadoId: Long, dto: ContactoEmergenciaDto): Boolean {
         return try {
-            service.actualizarContacto(empleadoId, dto).isSuccessful
+            perfilServiceClient.actualizarContacto(empleadoId, dto).isSuccessful
         } catch (e: Exception) {
             false
         }

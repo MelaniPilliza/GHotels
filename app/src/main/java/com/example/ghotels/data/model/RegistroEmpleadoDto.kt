@@ -14,10 +14,12 @@ data class RegistroEmpleadoDto(
     val movil: String,
     val numeroSeguridadSocial: String,
     val fechaNacimiento: String,
+    val fechaIngreso: String?,
     val tipoContrato: String,
     val horasLaboralesDiarias: Int,
     val rolId: Long,
     val departamentoId: Long,
+    val supervisorId: Long? = null, // ✅ Añadido
     val direccion: DireccionDto? = null,
     val nacionalidad: String? = null,
     val genero: String? = null,
@@ -33,14 +35,16 @@ data class RegistroEmpleadoDto(
                 nombre = empleado.nombre,
                 apellidos = empleado.apellidos,
                 mail = empleado.mail,
-                password= empleado.password,
+                password = empleado.password, // Asegúrate de NO enviar la password real en producción
                 movil = empleado.movil,
                 numeroSeguridadSocial = empleado.numeroSeguridadSocial,
                 fechaNacimiento = empleado.fechaNacimiento,
+                fechaIngreso = empleado.fechaIngreso,
                 tipoContrato = empleado.tipoContrato,
                 horasLaboralesDiarias = empleado.horasLaboralesDiarias,
-                rolId = empleado.rol.id!!, // no null
-                departamentoId = empleado.departamento.id!!, // no null
+                rolId = empleado.rol.id!!,
+                departamentoId = empleado.departamento.id!!,
+                supervisorId = empleado.supervisorId , // ✅ Añadido
                 direccion = empleado.direccion?.let {
                     DireccionDto(
                         calle = it.calle,

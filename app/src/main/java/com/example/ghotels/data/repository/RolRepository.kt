@@ -6,17 +6,17 @@ import com.example.ghotels.domain.model.Rol
 /**
  * Repositorio que gestiona los roles disponibles en la empresa.
  */
-class RolRepository(val service: RolServiceClient) {
+class RolRepository(val rolServiceClient: RolServiceClient) {
 
 
     suspend fun listarTodos(): List<Rol> = try {
-        service.listarTodos()
+        rolServiceClient.listarTodos()
     } catch (e: Exception) {
         emptyList()
     }
 
     suspend fun obtenerPorNombre(nombre: String): Rol? {
-        val response = service.obtenerPorNombre(nombre)
+        val response = rolServiceClient.obtenerPorNombre(nombre)
         return if (response.isSuccessful) response.body() else null
     }
 }

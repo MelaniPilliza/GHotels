@@ -11,25 +11,25 @@ import kotlinx.coroutines.flow.flowOn
 /**
  * Repositorio que maneja las solicitudes de permisos.
  */
-class SolicitudPermisoRepository(val service: SolicitudPermisoServiceClient) {
+class SolicitudPermisoRepository(val solicitudServiceClient: SolicitudPermisoServiceClient) {
 
 
     fun observarPorEmpleado(empleadoId: Long): Flow<List<SolicitudPermisoDto>> =
         observeQuery(retryTime = 3000) {
-            service.listarPorEmpleado(empleadoId)
+            solicitudServiceClient.listarPorEmpleado(empleadoId)
         }
 
 
     suspend fun crear(dto: SolicitudPermisoDto): SolicitudPermisoDto? {
-        val response = service.crear(dto)
+        val response = solicitudServiceClient.crear(dto)
         return if (response.isSuccessful) response.body() else null
     }
 
 
-    suspend fun aprobar(id: Long): Boolean = service.aprobar(id).isSuccessful
+    suspend fun aprobar(id: Long): Boolean = solicitudServiceClient.aprobar(id).isSuccessful
 
 
-    suspend fun rechazar(id: Long): Boolean = service.rechazar(id).isSuccessful
+    suspend fun rechazar(id: Long): Boolean = solicitudServiceClient.rechazar(id).isSuccessful
 
     private fun <T> observeQuery(retryTime: Long = 5000, query: suspend () -> List<T>): Flow<List<T>> = flow {
         var lastResult: List<T> = emptyList()

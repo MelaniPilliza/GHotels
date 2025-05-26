@@ -8,9 +8,9 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface AsistenciaServiceClient {
-    @POST("/api/asistencias")
-    suspend fun crear(@Body dto: AsistenciaDto): Response<AsistenciaDto>
+    @GET("/api/asistencias/empleado/{id}")
+    suspend fun obtenerAsistencias(@Path("id") empleadoId: Long): List<AsistenciaDto>
 
-    @GET("/api/asistencias/empleado/{empleadoId}")
-    suspend fun getPorEmpleado(@Path("empleadoId") empleadoId: Long): List<AsistenciaDto>
+    @POST("/api/asistencias")
+    suspend fun registrarAsistencia(@Body asistencia: AsistenciaDto): Response<Unit>
 }

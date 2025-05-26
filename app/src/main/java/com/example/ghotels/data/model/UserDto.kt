@@ -1,6 +1,6 @@
 package com.example.ghotels.data.model
 
-data class LoginRespuestaDto(
+data class UserDto(
     val id: Long,
     val nombre: String,
     val apellidos: String,
@@ -25,6 +25,7 @@ data class LoginRespuestaDto(
     val nombreSupervisor: String? = null,
     val rolSupervisor: String? = null,
 
+    val direccion: DireccionDto? = null,
     val contactoEmergencia: ContactoEmergenciaDto? = null,
     val asistencias: List<AsistenciaDto> = emptyList(),
     val permisos: List<SolicitudPermisoDto> = emptyList()

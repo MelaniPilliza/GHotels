@@ -4,15 +4,17 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ghotels.data.model.LoginDto
+import com.example.ghotels.data.model.UserDto
 import com.example.ghotels.domain.model.Empleado
 import com.example.ghotels.domain.usecase.LoginUseCase
-import com.example.ghotels.data.model.LoginRespuestaDto
+import com.example.ghotels.domain.usecase.SaveUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val saveUserUseCase: SaveUserUseCase
 ) : ViewModel() {
 
     private val _email = MutableStateFlow("")
@@ -21,8 +23,8 @@ class LoginViewModel(
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
 
-    private val _loginSuccess = MutableStateFlow<LoginRespuestaDto?>(null)
-    val loginSuccess: StateFlow<LoginRespuestaDto?> = _loginSuccess
+    private val _loginSuccess = MutableStateFlow<UserDto?>(null)
+    val loginSuccess: StateFlow<UserDto?> = _loginSuccess
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
@@ -45,6 +47,7 @@ class LoginViewModel(
             val result = loginUseCase(loginDto)
 
             result.onSuccess {
+                saveUserUseCase.setUsuario(it) // ✅ Guardamos el usuario globalmente
                 _loginSuccess.value = it
                 _errorMessage.value = null
             }.onFailure {
@@ -52,8 +55,6 @@ class LoginViewModel(
                 _errorMessage.value = it.message
                 _loginSuccess.value = null
             }
-
         }
-
     }
 }

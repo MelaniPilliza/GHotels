@@ -12,10 +12,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ghotels.R
 
 @Composable
-fun LogoScreen() {
+fun LogoScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -34,6 +36,7 @@ fun LogoScreen() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SplashScreenPreview() {
-    LogoScreen()
+fun LogoScreenPreview() {
+    val navController = rememberNavController()
+    LogoScreen(navController = navController)
 }
