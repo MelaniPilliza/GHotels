@@ -17,24 +17,25 @@ import androidx.navigation.NavController
 import com.example.ghotels.presentation.ui.components.MenuGHotels
 import com.example.ghotels.presentation.ui.components.TopGHotels
 import androidx.navigation.compose.rememberNavController
-import com.example.ghotels.presentation.viewmodel.PermissionViewModel
+import com.example.ghotels.presentation.viewmodel.PermissionTypeViewModel
 import com.example.ghotels.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.style.TextOverflow
-import com.example.ghotels.data.model.TipoPermisoDto
+import com.example.ghotels.data.model.PermissionTypeDto
+import com.example.ghotels.domain.model.PermissionType
 
 
 @Composable
 fun PermissionScreen(
     navController: NavController,
-    permissionViewModel: PermissionViewModel = koinViewModel()
+    permissionViewModel: PermissionTypeViewModel = koinViewModel()
 ) {
-    val tiposPermiso by permissionViewModel.tiposPermiso.collectAsState()
+    val permissionTypes by permissionViewModel.permissionTypes.collectAsState()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50) // azul fondo
+        color = Color(0xFF002B50)
     ) {
         Box {
             LazyColumn(
@@ -44,30 +45,27 @@ fun PermissionScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    TopGHotels(titulo = "Permisos")
+                    TopGHotels(title = "Permisos")
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    CardPermisos(tiposPermiso = tiposPermiso)
+                    PermissionTypeCard(permissionTypes = permissionTypes)
 
                     Spacer(modifier = Modifier.height(40.dp))
                 }
             }
 
-            // Menú inferior
             MenuGHotels(
                 selectedIndex = 1,
                 navController = navController,
-                modifier = Modifier.align(Alignment.BottomCenter) // 👈 NECESARIO
+                modifier = Modifier.align(Alignment.BottomCenter)
             )
-
-
         }
     }
 }
 
 @Composable
-fun CardPermisos(tiposPermiso: List<TipoPermisoDto>) {
+fun PermissionTypeCard(permissionTypes: List<PermissionType>) {
     Card(
         modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(16.dp),
@@ -75,7 +73,7 @@ fun CardPermisos(tiposPermiso: List<TipoPermisoDto>) {
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(vertical = 16.dp)) {
-            tiposPermiso.forEachIndexed { index, permiso ->
+            permissionTypes.forEachIndexed { index, type ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -88,24 +86,30 @@ fun CardPermisos(tiposPermiso: List<TipoPermisoDto>) {
                             modifier = Modifier
                                 .size(10.dp)
                                 .background(
-                                    color = Color(0xFF4CAF50), // Color verde único
+                                    color = Color(0xFF4CAF50),
                                     shape = CircleShape
                                 )
                         )
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = permiso.nombre, fontSize = 16.sp, color = Color.Black)
+                        Text(text = type.name, fontSize = 16.sp, color = Color.Black)
                     }
 
-                    val diasTexto = if (permiso.ilimitado) {
+                    val diasTexto = if (type.unlimited) {
                         "Ilimitado"
                     } else {
-                        "Quedan ${permiso.diasDisponiblesAnuales ?: 0} días"
+                        "Quedan ${type.annualAvailableDays ?: 0} días"
                     }
 
-                    Text(text = diasTexto, fontSize = 14.sp, color = Color.Gray, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(
+                        text = diasTexto,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
-                if (index != tiposPermiso.lastIndex) {
+                if (index != permissionTypes.lastIndex) {
                     Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
                 }
             }

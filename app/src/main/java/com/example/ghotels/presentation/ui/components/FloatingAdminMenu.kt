@@ -36,7 +36,7 @@ fun FloatingAdminMenu(
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // Fondo desenfocado que impide interacción con el fondo
+        // DESENFOCADO
         if (expandido) {
             Box(
                 modifier = Modifier
@@ -46,11 +46,11 @@ fun FloatingAdminMenu(
             )
         }
 
-        // Menú flotante
+        // FLOTANTE
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 24.dp, bottom = 80.dp),
+                .padding(end = 18.dp, bottom = 77.dp),
             horizontalAlignment = Alignment.End
         ) {
             AnimatedVisibility (visible = expandido) {
@@ -58,9 +58,12 @@ fun FloatingAdminMenu(
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                     horizontalAlignment = Alignment.End
                 ) {
+                    AdminMenuItem("ROLES") { navController.navigate("roleadmin") }
+                    AdminMenuItem("DEPARTAMENTOS") { navController.navigate("departmentadmin") }
+                    AdminMenuItem("FESTIVOS") { navController.navigate("festivoadmin") }
                     AdminMenuItem("EMPLEADOS") { navController.navigate("staffadmin") }
-                    AdminMenuItem("FESTIVOS") { navController.navigate("festivos") }
-                    AdminMenuItem("PERMISOS") { navController.navigate("permisos") }
+                    AdminMenuItem("PERMISOS") { navController.navigate("permissionadmin") }
+                    AdminMenuItem("SOLICITUDES DE PERMISOS") { navController.navigate("permissionrequestadmin") }
                 }
             }
 

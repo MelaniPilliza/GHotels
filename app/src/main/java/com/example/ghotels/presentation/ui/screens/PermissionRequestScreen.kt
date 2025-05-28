@@ -1,0 +1,190 @@
+package com.example.ghotels.presentation.ui.screens
+
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+import com.example.ghotels.presentation.ui.components.MenuGHotels
+import com.example.ghotels.presentation.ui.components.TopGHotels
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.example.ghotels.domain.model.PermissionRequest
+import com.example.ghotels.domain.model.PermissionType
+import com.example.ghotels.presentation.viewmodel.HomeViewModel
+import com.example.ghotels.presentation.viewmodel.PermissionRequestViewModel
+import com.example.ghotels.presentation.viewmodel.PermissionTypeViewModel
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import java.util.*
+
+@Composable
+fun PermissionRequestScreen(
+    navController: NavController,
+    permissionTypeViewModel: PermissionTypeViewModel = koinViewModel(),
+    permissionRequestViewModel: PermissionRequestViewModel = koinViewModel(),
+    homeViewModel: HomeViewModel = koinViewModel()
+) {
+    val permissionTypes by permissionTypeViewModel.permissionTypes.collectAsState()
+    val user by homeViewModel.user.collectAsState()
+    val employeeId = user?.id ?: return
+
+    var selectedType by remember { mutableStateOf<PermissionType?>(null) }
+    var fromDate by remember { mutableStateOf("") }
+    var toDate by remember { mutableStateOf("") }
+    var comment by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 70.dp)
+            ) {
+                item {
+                    TopGHotels(title = "Solicitar ausencia")
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(0.9f),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+
+                            Text("¿Qué tipo de ausencia?", fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Box {
+                                OutlinedTextField(
+                                    value = selectedType?.name ?: "Seleccionar...",
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    label = { Text("Tipo de permiso") },
+                                    trailingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = null,
+                                            modifier = Modifier.clickable { expanded = true }
+                                        )
+                                    }
+                                )
+                                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                                    permissionTypes.forEach { tipo ->
+                                        DropdownMenuItem(
+                                            text = { Text(tipo.name) },
+                                            onClick = {
+                                                selectedType = tipo
+                                                expanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Desde - Hasta", fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = fromDate,
+                                    onValueChange = { fromDate = it },
+                                    modifier = Modifier.weight(1f),
+                                    placeholder = { Text("YYYY-MM-DD") },
+                                    singleLine = true
+                                )
+                                OutlinedTextField(
+                                    value = toDate,
+                                    onValueChange = { toDate = it },
+                                    modifier = Modifier.weight(1f),
+                                    placeholder = { Text("YYYY-MM-DD") },
+                                    singleLine = true
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Comentario", fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = comment,
+                                onValueChange = { comment = it },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(120.dp),
+                                placeholder = { Text("Añadir comentario...") }
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            ) {
+                                OutlinedButton(
+                                    onClick = { navController.popBackStack() },
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+                                ) {
+                                    Text("Cancelar")
+                                }
+                                Button(
+                                    onClick = {
+                                        selectedType?.let {
+                                            coroutineScope.launch {
+                                                val success = permissionRequestViewModel.createRequest(
+                                                    fromDate = fromDate,
+                                                    toDate = toDate,
+                                                    comment = comment,
+                                                    permissionTypeId = it.id!!,
+                                                    employeeId = employeeId
+                                                )
+                                                if (success) {
+                                                    navController.popBackStack()
+                                                }
+                                            }
+                                        }
+                                    },
+                                    enabled = selectedType != null && fromDate.isNotBlank() && toDate.isNotBlank(),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00556E))
+                                ) {
+                                    Text("Solicitar", color = Color.White)
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
+            }
+
+            MenuGHotels(
+                selectedIndex = 1,
+                navController = navController,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
+    }
+}

@@ -94,7 +94,7 @@ fun MenuGHotels(
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        navController.navigate(Screen.Assistance.route) {
+                        navController.navigate(Screen.Attendance.route) {
                             popUpTo(0)
                             launchSingleTop = true
                         }

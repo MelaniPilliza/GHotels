@@ -32,12 +32,15 @@ import com.example.ghotels.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun StaffScreen(navController: NavController, viewModel: StaffViewModel = koinViewModel()) {
-    val listaEmpleados by viewModel.empleados.collectAsState()
+fun StaffScreen(
+    navController: NavController,
+    viewModel: StaffViewModel = koinViewModel()
+) {
+    val empleados by viewModel.employees.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopGHotels(titulo = "Personal")
+            TopGHotels(title = "Personal")
 
             Box(
                 modifier = Modifier
@@ -45,8 +48,8 @@ fun StaffScreen(navController: NavController, viewModel: StaffViewModel = koinVi
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .background(Color.White)
             ) {
-                LaunchedEffect(listaEmpleados) {
-                    Log.d("STAFF_SCREEN", "📦 Empleados recibidos en UI: ${listaEmpleados.size}")
+                LaunchedEffect(empleados) {
+                    Log.d("STAFF_SCREEN", "📦 Empleados recibidos en UI: ${empleados.size}")
                 }
 
                 LazyColumn(
@@ -54,8 +57,8 @@ fun StaffScreen(navController: NavController, viewModel: StaffViewModel = koinVi
                         .fillMaxSize()
                         .padding(vertical = 12.dp)
                 ) {
-                    items(items = listaEmpleados) { empleado ->
-                        EmpleadoCard(empleado)
+                    items(empleados) { empleado ->
+                        EmployeeCard(empleado)
                     }
                     item {
                         Spacer(modifier = Modifier.height(80.dp))
@@ -72,8 +75,9 @@ fun StaffScreen(navController: NavController, viewModel: StaffViewModel = koinVi
     }
 }
 
+
 @Composable
-fun EmpleadoCard(empleado: UserDto) {
+fun EmployeeCard(empleado: UserDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,7 +92,7 @@ fun EmpleadoCard(empleado: UserDto) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = listOf(empleado.nombre, empleado.apellidos)
+                text = listOf(empleado.firstName, empleado.lastName)
                     .flatMap { it.split(" ") }
                     .take(2)
                     .joinToString("") { it.firstOrNull()?.uppercase() ?: "" },
@@ -101,12 +105,12 @@ fun EmpleadoCard(empleado: UserDto) {
 
         Column {
             Text(
-                text = "${empleado.nombre} ${empleado.apellidos}",
+                text = "${empleado.firstName} ${empleado.lastName}",
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp
             )
             Text(
-                text = empleado.rol,
+                text = empleado.role ?: "Sin rol",
                 fontSize = 12.sp,
                 color = Color.Gray
             )

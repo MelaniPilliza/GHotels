@@ -5,13 +5,23 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.ghotels.presentation.ui.screens.AssistanceScreen
+import com.example.ghotels.presentation.ui.screens.AttendanceScreen
 import com.example.ghotels.presentation.ui.screens.HomeScreen
+import com.example.ghotels.presentation.ui.screens.PermissionRequestScreen
 import com.example.ghotels.presentation.ui.screens.PermissionScreen
 import com.example.ghotels.presentation.ui.screens.ProfileScreen
 import com.example.ghotels.presentation.ui.screens.StaffScreen
+import com.example.ghotels.presentation.ui.screens.admin.department.AddDepartmentScreen
 import com.example.ghotels.presentation.ui.screens.admin.AddEmployeeScreen
+import com.example.ghotels.presentation.ui.screens.admin.role.AddRoleScreen
+import com.example.ghotels.presentation.ui.screens.admin.department.DepartmentAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.role.RoleAdminScreen
 import com.example.ghotels.presentation.ui.screens.admin.StaffAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.officialholiday.AddOfficialHolidayScreen
+import com.example.ghotels.presentation.ui.screens.admin.officialholiday.OfficialHolidayAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.permissionrequest.PermissionRequestAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.permissiontype.AddPermissionTypeScreen
+import com.example.ghotels.presentation.ui.screens.admin.permissiontype.PermissionTypeAdminScreen
 import com.example.ghotels.presentation.ui.screens.login.LoginScreen
 import com.example.ghotels.presentation.ui.screens.logo.LogoScreen
 
@@ -39,8 +49,8 @@ fun NavGraph(startDestination: String = Screen.Login.route) {
             PermissionScreen(navController)
         }
 
-        composable(Screen.Assistance.route) {
-            AssistanceScreen(navController)
+        composable(Screen.Attendance.route) {
+            AttendanceScreen(navController)
         }
 
         composable(Screen.Staff.route) {
@@ -57,6 +67,46 @@ fun NavGraph(startDestination: String = Screen.Login.route) {
 
         composable(Screen.AddEmployee.route) {
             AddEmployeeScreen(navController)
+        }
+
+        composable(Screen.OfficialHolidayAdmin.route) {
+            OfficialHolidayAdminScreen(navController)
+        }
+
+        composable(Screen.AddOfficialHoliday.route) {
+            AddOfficialHolidayScreen(navController)
+        }
+
+        composable(Screen.PermissionAdmin.route) {
+            PermissionTypeAdminScreen(navController)
+        }
+
+        composable(Screen.AddPermission.route) {
+            AddPermissionTypeScreen(navController)
+        }
+
+        composable(Screen.RoleAdmin.route) {
+            RoleAdminScreen(navController)
+        }
+
+        composable(Screen.AddRole.route) {
+            AddRoleScreen(navController)
+        }
+
+        composable(Screen.DepartmentAdmin.route) {
+            DepartmentAdminScreen(navController)
+        }
+
+        composable(Screen.AddDepartment.route) {
+            AddDepartmentScreen(navController)
+        }
+
+        composable(Screen.PermissionRequest.route) {
+            PermissionRequestScreen(navController)
+        }
+
+        composable(Screen.PermissionRequestAdmin.route) {
+            PermissionRequestAdminScreen(navController)
         }
 
     }

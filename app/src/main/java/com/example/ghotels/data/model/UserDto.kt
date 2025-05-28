@@ -1,32 +1,28 @@
 package com.example.ghotels.data.model
 
 data class UserDto(
-    val id: Long,
-    val nombre: String,
-    val apellidos: String,
-    val mail: String,
-    val movil: String,
+    val id: Long?,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phone: String,
     val dni: String,
-    val numeroSeguridadSocial: String,
-    val fechaNacimiento: String,
-
-    val nacionalidad: String? = null,
-    val genero: String? = null,
-    val estadoCivil: String? = null,
-    val numeroHijos: Int? = null,
-    val discapacidad: Boolean? = null,
-
-    val tipoContrato: String,
-    val horasLaboralesDiarias: Int,
-    val fechaIngreso: String,
-
-    val rol: String,
-    val departamento: String,
-    val nombreSupervisor: String? = null,
-    val rolSupervisor: String? = null,
-
-    val direccion: DireccionDto? = null,
-    val contactoEmergencia: ContactoEmergenciaDto? = null,
-    val asistencias: List<AsistenciaDto> = emptyList(),
-    val permisos: List<SolicitudPermisoDto> = emptyList()
+    val socialSecurityNumber: String,
+    val birthDate: String,
+    val nationality: String? = null,
+    val gender: String? = null,
+    val maritalStatus: String? = null,
+    val numberOfChildren: Int? = null,
+    val disability: Boolean? = null,
+    val contractType: String,
+    val dailyWorkingHours: Int,
+    val entryDate: String,
+    val role: String?,
+    val department: String?,
+    val supervisorName: String?,
+    val supervisorRole: String?,
+    val address: AddressDto?,
+    val emergencyContact: EmergencyContactDto?,
+    val attendances: List<AttendanceDto> = emptyList(),
+    val permissions: List<PermissionRequestDto> = emptyList()
 )

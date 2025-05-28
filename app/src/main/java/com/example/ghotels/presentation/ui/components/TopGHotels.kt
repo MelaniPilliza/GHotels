@@ -33,8 +33,8 @@ import java.util.Locale
 
 @Composable
 fun TopGHotels(
-    titulo: String,
-    fecha: String = obtenerFechaHoy()
+    title: String,
+    date: String = obtenerFechaHoy()
 ) {
     Box(
         modifier = Modifier
@@ -43,8 +43,8 @@ fun TopGHotels(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF00556E), // azul petróleo oscuro
-                        Color(0xFF002B50)  // azul navy elegante
+                        Color(0xFF00556E),
+                        Color(0xFF002B50)
                     )
                 )
             )
@@ -56,13 +56,13 @@ fun TopGHotels(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = fecha,
+                text = date,
                 fontSize = 12.sp,
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = titulo,
+                text = title,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

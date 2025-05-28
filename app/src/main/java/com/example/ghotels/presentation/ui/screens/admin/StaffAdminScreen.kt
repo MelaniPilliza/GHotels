@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ghotels.data.model.UserDto
+import com.example.ghotels.presentation.navigation.Screen
 import com.example.ghotels.presentation.ui.components.FloatingAdminMenu
 import com.example.ghotels.presentation.viewmodel.StaffViewModel
 import com.example.ghotels.ui.theme.AppTheme
@@ -38,7 +39,7 @@ fun StaffAdminScreen(
     navController: NavController,
     viewModel: StaffViewModel = koinViewModel()
 ) {
-    val empleados by viewModel.empleados.collectAsState()
+    val employees by viewModel.employees.collectAsState()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -52,10 +53,10 @@ fun StaffAdminScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    TopGHotels(titulo = "Empleados")
+                    TopGHotels(title = "Empleados")
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Fila para botón "Añadir empleado"
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -67,19 +68,18 @@ fun StaffAdminScreen(
                             color = Color(0xFFB3E5FC),
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
-                            modifier = Modifier
-                                .clickable {
-                                    navController.navigate("addemployee")
-                                }
+                            modifier = Modifier.clickable {
+                                navController.navigate(Screen.AddEmployee.route)
+                            }
                         )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                items(empleados) { empleado ->
-                    EmpleadoAdminCard(empleado = empleado, onEditClick = {
-                        // TODO: Navegar a pantalla de edición de empleado
+                items(employees) { employee ->
+                    EmployeeAdminCard(employee = employee, onEditClick = {
+                        // TODO: Navegar a pantalla de edición
                     })
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -93,17 +93,16 @@ fun StaffAdminScreen(
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
 
-            // ✅ Menú flotante principal del admin (único)
             FloatingAdminMenu(navController = navController)
         }
     }
 }
 
+
 @Composable
-fun EmpleadoAdminCard(empleado: UserDto, onEditClick: () -> Unit) {
+fun EmployeeAdminCard(employee: UserDto, onEditClick: () -> Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(0.9f),
+        modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -120,7 +119,7 @@ fun EmpleadoAdminCard(empleado: UserDto, onEditClick: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = listOf(empleado.nombre, empleado.apellidos)
+                    text = listOf(employee.firstName, employee.lastName)
                         .flatMap { it.split(" ") }
                         .take(2)
                         .joinToString("") { it.firstOrNull()?.uppercase() ?: "" },
@@ -132,8 +131,9 @@ fun EmpleadoAdminCard(empleado: UserDto, onEditClick: () -> Unit) {
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "${empleado.nombre} ${empleado.apellidos}", fontWeight = FontWeight.Medium)
-                Text(text = empleado.rol, fontSize = 12.sp, color = Color.Gray)
+                Text(text = "${employee.firstName} ${employee.lastName}", fontWeight = FontWeight.Medium)
+                Text(text = employee.role.orEmpty(), fontSize = 12.sp, color = Color.Gray)
+
             }
 
             IconButton(onClick = onEditClick) {

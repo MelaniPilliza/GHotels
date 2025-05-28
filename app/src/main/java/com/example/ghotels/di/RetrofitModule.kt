@@ -1,13 +1,12 @@
 package com.example.ghotels.di
 
-import com.example.ghotels.data.source.remote.AsistenciaServiceClient
-import com.example.ghotels.data.source.remote.DepartamentoServiceClient
-import com.example.ghotels.data.source.remote.EmpleadoServiceClient
-import com.example.ghotels.data.source.remote.FestivoServiceClient
-import com.example.ghotels.data.source.remote.PerfilServiceClient
-import com.example.ghotels.data.source.remote.RolServiceClient
-import com.example.ghotels.data.source.remote.SolicitudPermisoServiceClient
-import com.example.ghotels.data.source.remote.TipoPermisoServiceClient
+import com.example.ghotels.data.source.remote.AttendanceServiceClient
+import com.example.ghotels.data.source.remote.DepartmentServiceClient
+import com.example.ghotels.data.source.remote.EmployeeServiceClient
+import com.example.ghotels.data.source.remote.OfficialHolidayServiceClient
+import com.example.ghotels.data.source.remote.PermissionRequestServiceClient
+import com.example.ghotels.data.source.remote.RoleServiceClient
+import com.example.ghotels.data.source.remote.PermissionTypeServiceClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,23 +20,35 @@ val retrofitModule = module {
             .build()
     }
 
-    single<EmpleadoServiceClient> {
-        get<Retrofit>().create(EmpleadoServiceClient::class.java)
+    single<EmployeeServiceClient> {
+        get<Retrofit>().create(EmployeeServiceClient::class.java)
     }
 
-    single<FestivoServiceClient> {
-        get<Retrofit>().create(FestivoServiceClient::class.java)
+    single<OfficialHolidayServiceClient> {
+        get<Retrofit>().create(OfficialHolidayServiceClient::class.java)
     }
 
-    single<TipoPermisoServiceClient> {
-        get<Retrofit>().create(TipoPermisoServiceClient::class.java) // ← NUEVO
+    single<PermissionTypeServiceClient> {
+        get<Retrofit>().create(PermissionTypeServiceClient::class.java) // ← NUEVO
     }
 
-    single<AsistenciaServiceClient> {
-        get<Retrofit>().create(AsistenciaServiceClient::class.java)
+    single<AttendanceServiceClient> {
+        get<Retrofit>().create(AttendanceServiceClient::class.java)
     }
 
-    single<EmpleadoServiceClient> {
-        get<Retrofit>().create(EmpleadoServiceClient::class.java)
+    single<EmployeeServiceClient> {
+        get<Retrofit>().create(EmployeeServiceClient::class.java)
+    }
+
+    single<RoleServiceClient> {
+        get<Retrofit>().create(RoleServiceClient::class.java)
+    }
+
+    single<DepartmentServiceClient> {
+        get<Retrofit>().create(DepartmentServiceClient::class.java)
+    }
+
+    single<PermissionRequestServiceClient> {
+        get<Retrofit>().create(PermissionRequestServiceClient::class.java) // ← NUEVO
     }
 }

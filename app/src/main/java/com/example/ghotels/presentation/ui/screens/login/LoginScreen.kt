@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ghotels.presentation.navigation.Screen
+import com.example.ghotels.presentation.viewmodel.AttendanceViewModel
 import com.example.ghotels.presentation.viewmodel.login.LoginViewModel
 import com.example.ghotels.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
@@ -24,7 +25,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel = koinViewModel() // Inyectado con Koin
+    loginViewModel: LoginViewModel = koinViewModel(),
+    attendanceViewModel: AttendanceViewModel = koinViewModel()
 ) {
     val mail by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
@@ -32,10 +34,14 @@ fun LoginScreen(
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
 
 
+    LaunchedEffect(Unit) {
+        loginViewModel.checkExistingSession()
+    }
+
     LaunchedEffect(loginSuccess) {
         loginSuccess?.let {
             navController.navigate(Screen.Home.route) {
-                popUpTo(Screen.Login.route) { inclusive = true } // Evita volver atrás con el botón
+                popUpTo(Screen.Login.route) { inclusive = true }
             }
         }
     }
@@ -113,19 +119,11 @@ fun LoginScreen(
 
             loginSuccess?.let {
                 Text(
-                    text = "¡Bienvenido/a, ${it.nombre}!",
+                    text = "¡Bienvenido/a, ${it.firstName}!",
                     color = Color(0xFF2E7D32),
                     modifier = Modifier.padding(top = 12.dp)
                 )
 
-                when (it.rol) {
-                    "ADMIN", "RRHH" -> {
-                        // Pantalla o botones para administradores/RRHH
-                    }
-                    else -> {
-                        // Pantalla para empleados u otros roles personalizados
-                    }
-                }
             }
 
 

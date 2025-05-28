@@ -44,7 +44,7 @@ fun ProfileScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel = koinViewModel()
 ) {
-    val usuario by profileViewModel.usuario.collectAsState()
+    val usuario by profileViewModel.user.collectAsState()
     val editandoPerfil = remember { mutableStateOf(false) }
     val editandoDireccion = remember { mutableStateOf(false) }
     val editandoContacto = remember { mutableStateOf(false) }
@@ -60,9 +60,8 @@ fun ProfileScreen(
                     .padding(bottom = 70.dp)
             ) {
                 item {
-                    TopGHotels(titulo = "Perfil")
+                    TopGHotels(title = "Perfil")
 
-                    // Cabecera
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -77,7 +76,7 @@ fun ProfileScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "${usuario?.nombre} ${usuario?.apellidos}",
+                                    text = "${usuario?.firstName} ${usuario?.lastName}",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
                                     color = Color(0xFF002B50)
@@ -85,79 +84,77 @@ fun ProfileScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Default.Work, contentDescription = null, tint = Color(0xFF00556E), modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(usuario?.rol ?: "", color = Color.Gray, fontSize = 13.sp)
+                                    Text(usuario?.role ?: "", color = Color.Gray, fontSize = 13.sp)
                                 }
                             }
                             IconButton(onClick = {
-                                navController.navigate("login") {
-                                    popUpTo("home") { inclusive = true }
-                                }
+                                profileViewModel.logout(navController)
                             }) {
                                 Icon(Icons.Default.ExitToApp, contentDescription = "Salir", tint = Color(0xFF00556E))
                             }
                         }
                     }
 
-                    // ----------- DATOS PERSONALES ----------
+                    // ---------- DATOS PERSONALES ----------
                     ProfileSectionCard(
                         titulo = "Datos personales",
                         campos = listOf(
-                            "Correo electrónico" to usuario?.mail.orEmpty(),
-                            "Teléfono" to usuario?.movil.orEmpty(),
-                            "Estado civil" to usuario?.estadoCivil.orEmpty(),
-                            "Nacionalidad" to usuario?.nacionalidad.orEmpty(),
-                            "Género" to usuario?.genero.orEmpty()
+                            "Correo electrónico" to usuario?.email.orEmpty(),
+                            "Teléfono" to usuario?.phone.orEmpty(),
+                            "Estado civil" to usuario?.maritalStatus.orEmpty(),
+                            "Nacionalidad" to usuario?.nationality.orEmpty(),
+                            "Género" to usuario?.gender.orEmpty()
                         ),
                         editando = editandoPerfil.value,
                         onEditClick = {
-                            if (editandoPerfil.value) profileViewModel.guardarCambios()
+                            if (editandoPerfil.value) profileViewModel.saveChanges()
                             editandoPerfil.value = !editandoPerfil.value
                         },
-                        onValueChange = { campo, valor -> profileViewModel.setCampo(campo, valor) },
-                        keys = listOf("mail", "movil", "estadoCivil", "nacionalidad", "genero")
+                        onValueChange = { campo, valor -> profileViewModel.updateField(campo, valor) },
+                        keys = listOf("email", "phone", "maritalStatus", "nationality", "gender")
                     )
 
-                    // ----------- DIRECCIÓN ----------
+                    // ---------- DIRECCIÓN ----------
                     ProfileSectionCard(
                         titulo = "Dirección",
                         campos = listOf(
-                            "Calle" to usuario?.direccion?.calle.orEmpty(),
-                            "Ciudad" to usuario?.direccion?.ciudad.orEmpty(),
-                            "Provincia" to usuario?.direccion?.provincia.orEmpty(),
-                            "Código Postal" to usuario?.direccion?.codigoPostal.orEmpty(),
-                            "País" to usuario?.direccion?.pais.orEmpty()
+                            "Calle" to usuario?.address?.street.orEmpty(),
+                            "Ciudad" to usuario?.address?.city.orEmpty(),
+                            "Provincia" to usuario?.address?.province.orEmpty(),
+                            "Código postal" to usuario?.address?.postalCode.orEmpty(),
+                            "País" to usuario?.address?.country.orEmpty()
                         ),
                         editando = editandoDireccion.value,
                         onEditClick = {
-                            if (editandoDireccion.value) profileViewModel.guardarCambios()
+                            if (editandoDireccion.value) profileViewModel.saveChanges()
                             editandoDireccion.value = !editandoDireccion.value
                         },
-                        onValueChange = { campo, valor -> profileViewModel.setCampo(campo, valor) },
-                        keys = listOf("direccionCalle", "direccionCiudad", "direccionProvincia", "direccionCodigoPostal", "direccionPais")
+                        onValueChange = { campo, valor -> profileViewModel.updateField(campo, valor) },
+                        keys = listOf("addressStreet", "addressCity", "addressProvince", "addressPostalCode", "addressCountry")
                     )
 
-                    // ----------- CONTACTO DE EMERGENCIA ----------
-                    val contacto = usuario?.contactoEmergencia
+                    // ---------- CONTACTO DE EMERGENCIA ----------
+                    val contacto = usuario?.emergencyContact
                     ProfileSectionCard(
                         titulo = "Contacto de emergencia",
                         campos = listOf(
-                            "Nombre" to contacto?.nombre.orEmpty(),
-                            "Teléfono" to contacto?.telefono.orEmpty(),
-                            "Relación" to contacto?.relacion.orEmpty()
+                            "Nombre" to contacto?.name.orEmpty(),
+                            "Teléfono" to contacto?.phone.orEmpty(),
+                            "Relación" to contacto?.relationship.orEmpty()
                         ),
                         editando = editandoContacto.value,
                         onEditClick = {
-                            if (editandoContacto.value) profileViewModel.guardarCambios()
+                            if (editandoContacto.value) profileViewModel.saveChanges()
                             editandoContacto.value = !editandoContacto.value
                         },
                         onValueChange = { campo, valor ->
                             when (campo) {
-                                "nombre" -> profileViewModel.setContactoEmergencia(valor, contacto?.telefono.orEmpty(), contacto?.relacion.orEmpty())
-                                "telefono" -> profileViewModel.setContactoEmergencia(contacto?.nombre.orEmpty(), valor, contacto?.relacion.orEmpty())
-                                "relacion" -> profileViewModel.setContactoEmergencia(contacto?.nombre.orEmpty(), contacto?.telefono.orEmpty(), valor)
+                                "name" -> profileViewModel.updateEmergencyContact(valor, contacto?.phone.orEmpty(), contacto?.relationship.orEmpty())
+                                "phone" -> profileViewModel.updateEmergencyContact(contacto?.name.orEmpty(), valor, contacto?.relationship.orEmpty())
+                                "relationship" -> profileViewModel.updateEmergencyContact(contacto?.name.orEmpty(), contacto?.phone.orEmpty(), valor)
                             }
                         },
-                        keys = listOf("nombre", "telefono", "relacion")
+                        keys = listOf("name", "phone", "relationship")
                     )
 
                     Spacer(modifier = Modifier.height(80.dp))
@@ -234,6 +231,8 @@ fun ProfileSectionCard(
         }
     }
 }
+
+
 
 
 

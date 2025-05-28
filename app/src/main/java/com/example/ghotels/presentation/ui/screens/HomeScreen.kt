@@ -1,6 +1,5 @@
 package com.example.ghotels.presentation.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,17 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.ghotels.data.model.FestivoDto
 import com.example.ghotels.presentation.ui.components.FloatingAdminMenu
 import com.example.ghotels.presentation.ui.components.MenuGHotels
 import com.example.ghotels.presentation.ui.components.TopGHotels
-import com.example.ghotels.presentation.viewmodel.FestivoViewModel
+import com.example.ghotels.presentation.viewmodel.OfficialHolidayViewModel
 import com.example.ghotels.presentation.viewmodel.HomeViewModel
 import com.example.ghotels.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
@@ -34,6 +31,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.example.ghotels.domain.model.OfficialHoliday
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Locale
@@ -42,16 +40,16 @@ import java.util.Locale
 fun HomeScreen(
     navController: NavController,
     homeViewModel: HomeViewModel = koinViewModel(),
-    festivoViewModel: FestivoViewModel = koinViewModel()
+    officialHolidayViewModel: OfficialHolidayViewModel = koinViewModel()
 ) {
-    val usuario by homeViewModel.usuario.collectAsState()
-    val festivos by festivoViewModel.festivos.collectAsState()
-    val nombre = usuario?.nombre ?: ""
-    val nombreCompleto = "${usuario?.nombre ?: ""} ${usuario?.apellidos ?: ""}"
-    val rol = usuario?.rol ?: ""
+    val user by homeViewModel.user.collectAsState()
+    val holidays by officialHolidayViewModel.holidays.collectAsState()
+    val firstName = user?.firstName ?: ""
+    val fullName = "${user?.firstName ?: ""} ${user?.lastName ?: ""}"
+    val role = user?.role ?: ""
 
     LaunchedEffect(Unit) {
-        festivoViewModel.cargarFestivos()
+        officialHolidayViewModel.loadHolidays()
     }
 
     Surface(
@@ -66,13 +64,13 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    TopGHotels(titulo = "Hola $nombre")
+                    TopGHotels(title = "Hola $firstName")
                     Spacer(modifier = Modifier.height(20.dp))
-                    CardPerfil(nombreCompleto = nombreCompleto, rol = rol, modifier = Modifier.fillMaxWidth(0.9f))
+                    ProfileCard(fullName = fullName, role = role, modifier = Modifier.fillMaxWidth(0.9f))
                     Spacer(modifier = Modifier.height(20.dp))
-                    CardFestivos(festivos = festivos)
+                    HolidayCard(holidays = holidays)
                     Spacer(modifier = Modifier.height(20.dp))
-                    CardAusencias()
+                    AbsenceCard(navController = navController)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -80,28 +78,22 @@ fun HomeScreen(
             MenuGHotels(
                 selectedIndex = 0,
                 navController = navController,
-                modifier = Modifier.align(Alignment.BottomCenter) // 👈 NECESARIO
+                modifier = Modifier.align(Alignment.BottomCenter)
             )
 
-
-
-            if (rol == "ADMIN" || rol == "RRHH") {
-                FloatingAdminMenu(navController = navController
-
-
-                )
+            if (role == "ADMIN" || role == "RRHH") {
+                FloatingAdminMenu(navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun CardPerfil(nombreCompleto: String, rol: String, modifier: Modifier = Modifier) {
-    // Extraemos iniciales: 1ª del nombre + 1ª del primer apellido
-    val partes = nombreCompleto.split(" ")
-    val iniciales = buildString {
-        append(partes.getOrNull(0)?.firstOrNull() ?: "")
-        append(partes.getOrNull(1)?.firstOrNull() ?: "")
+fun ProfileCard(fullName: String, role: String, modifier: Modifier = Modifier) {
+    val parts = fullName.split(" ")
+    val initials = buildString {
+        append(parts.getOrNull(0)?.firstOrNull() ?: "")
+        append(parts.getOrNull(1)?.firstOrNull() ?: "")
     }.uppercase()
 
     Card(
@@ -124,7 +116,7 @@ fun CardPerfil(nombreCompleto: String, rol: String, modifier: Modifier = Modifie
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = iniciales,
+                    text = initials,
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -134,14 +126,14 @@ fun CardPerfil(nombreCompleto: String, rol: String, modifier: Modifier = Modifie
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = nombreCompleto,
+                text = fullName,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
                 color = Color.Black
             )
 
             Text(
-                text = rol,
+                text = role,
                 fontSize = 12.sp,
                 color = Color.Gray
             )
@@ -149,9 +141,8 @@ fun CardPerfil(nombreCompleto: String, rol: String, modifier: Modifier = Modifie
     }
 }
 
-
 @Composable
-fun CardFestivos(festivos: List<FestivoDto>) {
+fun HolidayCard(holidays: List<OfficialHoliday>) {
     val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val locale = Locale("es", "ES")
 
@@ -166,17 +157,17 @@ fun CardFestivos(festivos: List<FestivoDto>) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text("Festivos", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                Text("Ver todas >", fontSize = 13.sp, color = Color(0xFF003366))
+                Text("Ver todos >", fontSize = 13.sp, color = Color(0xFF003366))
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            festivos.sortedBy { it.fecha }.take(3).forEach { festivo ->
-                val date = inputFormat.parse(festivo.fecha)
+            holidays.sortedBy { it.date }.take(4).forEach { holiday ->
+                val date = inputFormat.parse(holiday.date)
                 val calendar = Calendar.getInstance().apply { time = date!! }
 
-                val mes = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, locale)?.uppercase() ?: ""
-                val dia = calendar.get(Calendar.DAY_OF_MONTH).toString()
+                val month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, locale)?.uppercase() ?: ""
+                val day = calendar.get(Calendar.DAY_OF_MONTH).toString()
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -188,15 +179,15 @@ fun CardFestivos(festivos: List<FestivoDto>) {
                             .background(Color(0xFFD32F2F), shape = RoundedCornerShape(4.dp)),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(mes, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
-                        Text(dia, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+                        Text(month, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
+                        Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
-                        Text(festivo.nombre, fontWeight = FontWeight.SemiBold)
-                        Text("Madrid", fontSize = 12.sp, color = Color.Gray)
+                        Text(holiday.name, fontWeight = FontWeight.SemiBold)
+                        Text("Día no laborable", fontSize = 12.sp, color = Color.Gray)
                     }
                 }
             }
@@ -204,12 +195,10 @@ fun CardFestivos(festivos: List<FestivoDto>) {
     }
 }
 
-
 @Composable
-fun CardAusencias() {
+fun AbsenceCard(navController: NavController) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(0.9f),
+        modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -223,7 +212,10 @@ fun CardAusencias() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(),verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Box(
                     modifier = Modifier
                         .size(48.dp)
@@ -231,7 +223,7 @@ fun CardAusencias() {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Work, // Puedes cambiarlo por un ícono de maleta si tienes uno personalizado
+                        imageVector = Icons.Default.Work,
                         contentDescription = null,
                         tint = Color(0xFF003366)
                     )
@@ -247,7 +239,7 @@ fun CardAusencias() {
                         color = Color.Black
                     )
                     Text(
-                        text = "Haz click en 'Solicitar días libres'",
+                        text = "Haz click en 'Solicitar ausencia'",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
@@ -257,7 +249,7 @@ fun CardAusencias() {
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedButton(
-                onClick = { /* TODO */ },
+                onClick = { navController.navigate("permissionrequest") },
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -266,10 +258,10 @@ fun CardAusencias() {
             ) {
                 Text("Solicitar ausencia", color = Color.Black)
             }
-
         }
     }
 }
+
 
 
 
