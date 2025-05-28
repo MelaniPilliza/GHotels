@@ -1,6 +1,7 @@
 package com.example.ghotels.presentation.ui.screens
 
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,8 +22,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.example.ghotels.data.utils.DateUtils
 import com.example.ghotels.domain.model.PermissionRequest
 import com.example.ghotels.domain.model.PermissionType
 import com.example.ghotels.presentation.viewmodel.HomeViewModel
@@ -48,7 +51,9 @@ fun PermissionRequestScreen(
     var toDate by remember { mutableStateOf("") }
     var comment by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -88,7 +93,10 @@ fun PermissionRequestScreen(
                                         )
                                     }
                                 )
-                                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
                                     permissionTypes.forEach { tipo ->
                                         DropdownMenuItem(
                                             text = { Text(tipo.name) },
@@ -113,14 +121,14 @@ fun PermissionRequestScreen(
                                     value = fromDate,
                                     onValueChange = { fromDate = it },
                                     modifier = Modifier.weight(1f),
-                                    placeholder = { Text("YYYY-MM-DD") },
+                                    placeholder = { Text("dd/MM/yyyy") },
                                     singleLine = true
                                 )
                                 OutlinedTextField(
                                     value = toDate,
                                     onValueChange = { toDate = it },
                                     modifier = Modifier.weight(1f),
-                                    placeholder = { Text("YYYY-MM-DD") },
+                                    placeholder = { Text("dd/MM/yyyy") },
                                     singleLine = true
                                 )
                             }
@@ -150,8 +158,18 @@ fun PermissionRequestScreen(
                                 ) {
                                     Text("Cancelar")
                                 }
+
                                 Button(
                                     onClick = {
+                                        if (!DateUtils.isValidDate(fromDate) || !DateUtils.isValidDate(toDate)) {
+                                            Toast.makeText(
+                                                context,
+                                                "Formato de fecha incorrecto. Usa dd/MM/yyyy",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            return@Button
+                                        }
+
                                         selectedType?.let {
                                             coroutineScope.launch {
                                                 val success = permissionRequestViewModel.createRequest(
@@ -188,3 +206,4 @@ fun PermissionRequestScreen(
         }
     }
 }
+

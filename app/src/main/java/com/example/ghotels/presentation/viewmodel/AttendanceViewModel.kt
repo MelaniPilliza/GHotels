@@ -46,11 +46,16 @@ class AttendanceViewModel(
     private val _waitingForReason = MutableStateFlow(false)
     val waitingForReason: StateFlow<Boolean> = _waitingForReason
 
+    //Utilizo Job
+    //Job es como un contrato para una tarea en segundo plano (corrutina).
+    //-Saber si sigue viva.
+    //-Cancelar la tarea en cualquier momento.
+    //-Esperar a que termine.
     private var counterJob: Job? = null
 
-    /**
-     * ✅ Llamar justo después del login con el ID del empleado.
-     */
+
+
+    //Verifica si hay una asistencia abierta al iniciar sesión
     fun checkOpenAttendanceOnStartup(employeeId: Long) {
         viewModelScope.launch {
             val result = getOpenAttendanceUseCase(employeeId)
@@ -64,6 +69,7 @@ class AttendanceViewModel(
         }
     }
 
+    //Registra la entrada del empleado con la hora actual
     fun registerEntry(employeeId: Long) {
         val now = formatter.format(Date())
         val attendance = Attendance(
@@ -88,6 +94,7 @@ class AttendanceViewModel(
         }
     }
 
+    //Registra la salida del empleado y valida si cumplió la jornada
     fun registerExit(employeeId: Long, requiredHours: Int) {
         val now = formatter.format(Date())
         val attendance = _currentAttendance.value ?: return
@@ -121,10 +128,12 @@ class AttendanceViewModel(
         }
     }
 
+    //Guarda el motivo ingresado por el usuario
     fun setReason(text: String) {
         _reason.value = text
     }
 
+    //Inicia el contador de tiempo trabajado
     private fun startTimer() {
         stopTimer()
         counterJob = viewModelScope.launch {
@@ -142,11 +151,13 @@ class AttendanceViewModel(
         }
     }
 
+    //Detiene el contador de tiempo trabajado
     private fun stopTimer() {
-        counterJob?.cancel()
+        counterJob?.cancel() //si hay un Job anterior activo
         counterJob = null
     }
 
+    //Calcula la duración desde la entrada hasta ahora
     private fun calculateDuration(): Triple<Int, Int, Int> {
         val entry = _currentAttendance.value?.entryTime ?: return Triple(0, 0, 0)
         return try {

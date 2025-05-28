@@ -16,7 +16,7 @@ sealed class Screen(val route: String) {
 
     // Admin Screens
     object StaffAdmin : Screen("staffadmin")
-    object AddEmployee : Screen("addemployee")
+    object RegisterEmployee : Screen("addemployee")
 
     object PermissionAdmin : Screen("permissionadmin")
     object AddPermission : Screen("addpermission")

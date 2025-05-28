@@ -9,7 +9,16 @@ data class Employee(
     val password: String,
     val phone: String,
     val socialSecurityNumber: String,
-    val birthDate: String, // ISO 8601
+    val birthDate: String,
+    val entryDate: String,
+
+    val contractType: String,
+    val dailyWorkingHours: Int,
+
+    val roleId: Long,
+    val departmentId: Long,
+
+    val supervisorId: Long? = null,
 
     val address: Address? = null,
     val nationality: String? = null,
@@ -18,18 +27,9 @@ data class Employee(
     val numberOfChildren: Int = 0,
     val disability: Boolean = false,
 
-    val contractType: String,
-    val dailyWorkingHours: Int,
-    val entryDate: String,
-
-    val supervisorName: String? = null,
-    val supervisorRole: String? = null,
-
-    val role: String,
-    val department: String,
-
     val emergencyContact: EmergencyContact? = null,
     val attendances: List<Attendance> = emptyList(),
     val permissions: List<PermissionRequest> = emptyList()
 )
+
 

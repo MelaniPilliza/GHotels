@@ -12,7 +12,7 @@ import com.example.ghotels.presentation.ui.screens.PermissionScreen
 import com.example.ghotels.presentation.ui.screens.ProfileScreen
 import com.example.ghotels.presentation.ui.screens.StaffScreen
 import com.example.ghotels.presentation.ui.screens.admin.department.AddDepartmentScreen
-import com.example.ghotels.presentation.ui.screens.admin.AddEmployeeScreen
+import com.example.ghotels.presentation.ui.screens.admin.RegisterEmployeeScreen
 import com.example.ghotels.presentation.ui.screens.admin.role.AddRoleScreen
 import com.example.ghotels.presentation.ui.screens.admin.department.DepartmentAdminScreen
 import com.example.ghotels.presentation.ui.screens.admin.role.RoleAdminScreen
@@ -65,8 +65,8 @@ fun NavGraph(startDestination: String = Screen.Login.route) {
             StaffAdminScreen(navController)
         }
 
-        composable(Screen.AddEmployee.route) {
-            AddEmployeeScreen(navController)
+        composable(Screen.RegisterEmployee.route) {
+            RegisterEmployeeScreen(navController)
         }
 
         composable(Screen.OfficialHolidayAdmin.route) {

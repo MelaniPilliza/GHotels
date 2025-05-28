@@ -9,6 +9,7 @@ import com.example.ghotels.domain.usecase.permissionrequest.ListPermissionReques
 import com.example.ghotels.domain.usecase.permissionrequest.RejectPermissionRequestUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ghotels.data.utils.DateUtils
 import com.example.ghotels.domain.model.PermissionRequest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -33,19 +34,12 @@ class PermissionRequestViewModel(
     private val _error = mutableStateOf<String?>(null)
     val error: State<String?> = _error
 
-    private val formatterInput = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private val formatterOutput = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-
-    private fun convertToIsoDateTime(dateStr: String): String {
-        return try {
-            val date = formatterInput.parse(dateStr)
-            formatterOutput.format(date ?: Date())
-        } catch (e: Exception) {
-            ""
-        }
+    // DATEUTILS
+    private fun convertToIsoDateTime(dateStr: String): String? {
+        return DateUtils.toIsoFormat(dateStr)
     }
 
-    // Para crear una solicitud
+    // CREAR
     suspend fun createRequest(
         fromDate: String,
         toDate: String,
@@ -56,18 +50,24 @@ class PermissionRequestViewModel(
         val formattedStart = convertToIsoDateTime(fromDate)
         val formattedEnd = convertToIsoDateTime(toDate)
 
+        if (formattedStart == null || formattedEnd == null) {
+            _error.value = "Invalid date format"
+            return false
+        }
+
         val request = PermissionRequest(
             startDate = formattedStart,
             endDate = formattedEnd,
             resolutionDate = null,
             reason = comment,
+            supportingDocument = null,
+            status = "PENDING",
             permissionTypeId = permissionTypeId,
             employeeId = employeeId
         )
         return addRequestUseCase(request)
     }
 
-    // Para empleados: listar sus propias solicitudes
     fun loadRequestsByEmployee(employeeId: Long) {
         viewModelScope.launch {
             _loading.value = true
@@ -81,7 +81,6 @@ class PermissionRequestViewModel(
         }
     }
 
-    // Para admins: listar todas las solicitudes
     fun loadAllRequests() {
         viewModelScope.launch {
             _loading.value = true
@@ -95,7 +94,6 @@ class PermissionRequestViewModel(
         }
     }
 
-    // Aprobar solicitud
     fun approveRequest(id: Long) {
         viewModelScope.launch {
             val success = approveRequestUseCase(id)
@@ -107,7 +105,6 @@ class PermissionRequestViewModel(
         }
     }
 
-    // Rechazar solicitud
     fun rejectRequest(id: Long) {
         viewModelScope.launch {
             val success = rejectRequestUseCase(id)

@@ -46,7 +46,7 @@ fun AttendanceScreen(
         attendanceViewModel.checkOpenAttendanceOnStartup(employeeId)
     }
 
-    // Observamos los estados del ViewModel de asistencia
+
     val hasCheckedIn by attendanceViewModel.hasCheckedIn.collectAsState()
     val reason by attendanceViewModel.reason.collectAsState()
     val workedTime by attendanceViewModel.workedTime.collectAsState()

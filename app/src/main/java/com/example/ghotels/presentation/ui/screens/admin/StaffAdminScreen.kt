@@ -69,7 +69,7 @@ fun StaffAdminScreen(
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
                             modifier = Modifier.clickable {
-                                navController.navigate(Screen.AddEmployee.route)
+                                navController.navigate(Screen.RegisterEmployee.route)
                             }
                         )
                     }
