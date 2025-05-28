@@ -3,6 +3,9 @@ package com.example.ghotels.presentation.ui.screens.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -11,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +37,7 @@ fun LoginScreen(
     val errorMessage by loginViewModel.errorMessage.collectAsState()
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
 
+    var passwordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         loginViewModel.checkExistingSession()
@@ -45,7 +50,6 @@ fun LoginScreen(
             }
         }
     }
-
 
     Scaffold { innerPadding ->
         Column(
@@ -89,6 +93,16 @@ fun LoginScreen(
                 onValueChange = { loginViewModel.updatePassword(it) },
                 label = { Text("Contraseña") },
                 singleLine = true,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val image = if (passwordVisible)
+                        Icons.Default.VisibilityOff
+                    else Icons.Default.Visibility
+
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(imageVector = image, contentDescription = "Contraseña visible")
+                    }
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -123,13 +137,11 @@ fun LoginScreen(
                     color = Color(0xFF2E7D32),
                     modifier = Modifier.padding(top = 12.dp)
                 )
-
             }
-
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TextButton(onClick = { /* TODO: recuperar contraseña */ }) {
+            TextButton(onClick = {  }) {
                 Text(
                     text = "¿Olvidaste tu contraseña?",
                     color = Color(0xFF003366)

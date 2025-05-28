@@ -45,7 +45,7 @@ fun MenuGHotels(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // 🏠 INICIO
+            // INICIO
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -66,7 +66,7 @@ fun MenuGHotels(
                 Text("Inicio", fontSize = 10.sp, color = if (selectedIndex == 0) Color(0xFF0576CE) else Color.Black)
             }
 
-            // 📅 PERMISOS
+            // PERMISOS
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -87,7 +87,7 @@ fun MenuGHotels(
                 Text("Permisos", fontSize = 10.sp, color = if (selectedIndex == 1) Color(0xFF0576CE) else Color.Black)
             }
 
-            // ⏱️ ASISTENCIAS
+            // ASISTENCIAS
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -108,7 +108,7 @@ fun MenuGHotels(
                 Text("Asistencias", fontSize = 10.sp, color = if (selectedIndex == 2) Color(0xFF0576CE) else Color.Black)
             }
 
-            // 👥 EMPLEADOS
+            // EMPLEADOS
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -129,7 +129,7 @@ fun MenuGHotels(
                 Text("Empleados", fontSize = 10.sp, color = if (selectedIndex == 3) Color(0xFF0576CE) else Color.Black)
             }
 
-            // 🙍 PERFIL
+            // PERFIL
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,

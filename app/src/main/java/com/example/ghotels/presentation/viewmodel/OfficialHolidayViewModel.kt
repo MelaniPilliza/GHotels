@@ -40,7 +40,7 @@ class OfficialHolidayViewModel(
             try {
                 _holidays.value = listUseCase()
             } catch (e: Exception) {
-                _error.value = "❌ Error al cargar festivos"
+                _error.value = "Error al cargar festivos"
             } finally {
                 _loading.value = false
             }
@@ -55,10 +55,10 @@ class OfficialHolidayViewModel(
                 if (success) {
                     loadHolidays()
                 } else {
-                    _error.value = "❌ Error al crear el festivo"
+                    _error.value = "Error al crear el festivo"
                 }
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al añadir festivo"
+                _error.value = "Error inesperado al añadir festivo"
             }
         }
     }
@@ -71,10 +71,10 @@ class OfficialHolidayViewModel(
                 if (success) {
                     loadHolidays()
                 } else {
-                    _error.value = "❌ Error al actualizar el festivo"
+                    _error.value = "Error al actualizar el festivo"
                 }
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al actualizar festivo"
+                _error.value = "Error inesperado al actualizar festivo"
             }
         }
     }
@@ -86,10 +86,10 @@ class OfficialHolidayViewModel(
                 if (success) {
                     loadHolidays()
                 } else {
-                    _error.value = "❌ Error al eliminar el festivo"
+                    _error.value = "Error al eliminar el festivo"
                 }
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al eliminar festivo"
+                _error.value = "Error inesperado al eliminar festivo"
             }
         }
     }

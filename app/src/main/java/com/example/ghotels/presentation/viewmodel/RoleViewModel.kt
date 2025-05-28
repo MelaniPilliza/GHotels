@@ -39,7 +39,7 @@ class RoleViewModel(
             try {
                 _roles.value = listUseCase()
             } catch (e: Exception) {
-                _error.value = "❌ Error al cargar los roles"
+                _error.value = "Error al cargar los roles"
             } finally {
                 _loading.value = false
             }
@@ -53,9 +53,9 @@ class RoleViewModel(
                 val newRole = Role(name = name, description = description)
                 val success = addUseCase(newRole)
                 if (success) loadRoles()
-                else _error.value = "❌ Error al crear el rol"
+                else _error.value = "Error al crear el rol"
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al crear el rol"
+                _error.value = "Error inesperado al crear el rol"
             }
         }
     }
@@ -67,9 +67,9 @@ class RoleViewModel(
                 val updated = Role(id = id, name = name, description = description)
                 val success = updateUseCase(updated)
                 if (success) loadRoles()
-                else _error.value = "❌ Error al actualizar el rol"
+                else _error.value = "Error al actualizar el rol"
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al actualizar el rol"
+                _error.value = "Error inesperado al actualizar el rol"
             }
         }
     }
@@ -80,9 +80,9 @@ class RoleViewModel(
             try {
                 val success = deleteUseCase(id)
                 if (success) loadRoles()
-                else _error.value = "❌ Error al eliminar el rol"
+                else _error.value = "Error al eliminar el rol"
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al eliminar el rol"
+                _error.value = "Error inesperado al eliminar el rol"
             }
         }
     }

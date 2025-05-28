@@ -4,9 +4,7 @@ package com.example.ghotels.data.repository
 import com.example.ghotels.data.model.DepartmentDto
 import com.example.ghotels.data.source.remote.DepartmentServiceClient
 
-/**
- * Repositorio para gestionar departamentos.
- */
+
 class DepartmentRepository(
     private val serviceClient: DepartmentServiceClient
 ) {

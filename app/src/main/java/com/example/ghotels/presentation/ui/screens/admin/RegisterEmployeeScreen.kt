@@ -165,8 +165,8 @@ fun RegisterEmployeeScreen(
                                             entryDate = DateUtils.toIsoFormat(fechaIngreso) ?: fechaIngreso,
                                             contractType = tipoContrato,
                                             dailyWorkingHours = horasDiarias.toIntOrNull() ?: 8,
-                                            roleId = selectedRole!!.id!!, // ✅ Usamos el ID
-                                            departmentId = selectedDepartment!!.id!! // ✅ Usamos el ID
+                                            roleId = selectedRole!!.id!!,
+                                            departmentId = selectedDepartment!!.id!!
                                         )
                                         viewModel.registerEmployee(employee)
                                     },

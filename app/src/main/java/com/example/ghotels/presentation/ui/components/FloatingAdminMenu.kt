@@ -41,7 +41,7 @@ fun FloatingAdminMenu(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xCC000000)) // semi-transparente
+                    .background(Color(0xCC000000))
                     .clickable { expandido = false }
             )
         }

@@ -100,7 +100,7 @@ fun OfficialHolidayAdminScreen(
                         CardOfficialHoliday(
                             holiday = holiday,
                             onEditClick = {
-                                // navController.navigate("editfestivo/${holiday.name}")
+                                //FALTA NAVEGACION
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))

@@ -60,7 +60,7 @@ class PermissionTypeViewModel(
             result.onSuccess {
                 loadPermissionTypes()
             }.onFailure {
-                _error.value = "❌ Error al añadir tipo de permiso"
+                _error.value = "Error al añadir tipo de permiso"
             }
         }
     }
@@ -86,7 +86,7 @@ class PermissionTypeViewModel(
             result.onSuccess {
                 loadPermissionTypes()
             }.onFailure {
-                _error.value = "❌ Error al actualizar tipo de permiso"
+                _error.value = "Error al actualizar tipo de permiso"
             }
         }
     }
@@ -97,7 +97,7 @@ class PermissionTypeViewModel(
             result.onSuccess {
                 loadPermissionTypes()
             }.onFailure {
-                _error.value = "❌ Error al eliminar tipo de permiso"
+                _error.value = "Error al eliminar tipo de permiso"
             }
         }
     }

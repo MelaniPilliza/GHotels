@@ -62,7 +62,7 @@ fun RecoverPasswordScreen() {
         Spacer(modifier = Modifier.height(28.dp))
 
         Button(
-            onClick = { /* TODO: Enviar email de recuperación */ },
+            onClick = { },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF003366),
                 contentColor = Color.White
@@ -77,7 +77,7 @@ fun RecoverPasswordScreen() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        TextButton(onClick = { /* TODO: Volver al inicio */ }) {
+        TextButton(onClick = { }) {
             Text(
                 text = "Volver al inicio de sesión",
                 color = Color(0xFF005288)

@@ -43,9 +43,9 @@ data class RegisterEmployeeDto(
                 entryDate = employee.entryDate,
                 contractType = employee.contractType,
                 dailyWorkingHours = employee.dailyWorkingHours,
-                roleId = employee.roleId, // ✅ antes 0L
-                departmentId = employee.departmentId, // ✅ antes 0L
-                supervisorId = employee.supervisorId, // ✅ también lo agregas si hace falta
+                roleId = employee.roleId,
+                departmentId = employee.departmentId,
+                supervisorId = employee.supervisorId,
                 address = employee.address?.let {
                     AddressDto(
                         street = it.street,

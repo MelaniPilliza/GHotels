@@ -11,7 +11,7 @@ class RegisterAttendanceUseCase(
         val dto = AttendanceDto.from(attendance)
         val response = repository.register(dto)
         if (response.isSuccessful) Result.success(Unit)
-        else Result.failure(Exception("❌ Error al registrar asistencia"))
+        else Result.failure(Exception("Error al registrar asistencia"))
     } catch (e: Exception) {
         Result.failure(e)
     }

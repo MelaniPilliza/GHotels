@@ -172,7 +172,6 @@ fun AttendanceScreen(
             }
         }
 
-        // Menú inferior personalizado
         MenuGHotels(
             selectedIndex = 2,
             navController = navController,

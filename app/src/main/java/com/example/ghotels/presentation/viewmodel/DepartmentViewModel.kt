@@ -39,7 +39,7 @@ class DepartmentViewModel(
             try {
                 _departments.value = listUseCase()
             } catch (e: Exception) {
-                _error.value = "❌ Error al cargar departamentos"
+                _error.value = "Error al cargar departamentos"
             } finally {
                 _loading.value = false
             }
@@ -52,9 +52,9 @@ class DepartmentViewModel(
                 val newDepartment = Department(name = name)
                 val success = addUseCase(newDepartment)
                 if (success) loadDepartments()
-                else _error.value = "❌ Error al crear el departamento"
+                else _error.value = "Error al crear el departamento"
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al añadir departamento"
+                _error.value = "Error inesperado al añadir departamento"
             }
         }
     }
@@ -65,9 +65,9 @@ class DepartmentViewModel(
                 val department = Department(id = id, name = name)
                 val success = updateUseCase(department)
                 if (success) loadDepartments()
-                else _error.value = "❌ Error al actualizar el departamento"
+                else _error.value = "Error al actualizar el departamento"
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al actualizar departamento"
+                _error.value = "Error inesperado al actualizar departamento"
             }
         }
     }
@@ -77,9 +77,9 @@ class DepartmentViewModel(
             try {
                 val success = deleteUseCase(id)
                 if (success) loadDepartments()
-                else _error.value = "❌ Error al eliminar el departamento"
+                else _error.value = "Error al eliminar el departamento"
             } catch (e: Exception) {
-                _error.value = "❌ Error inesperado al eliminar departamento"
+                _error.value = "Error inesperado al eliminar departamento"
             }
         }
     }

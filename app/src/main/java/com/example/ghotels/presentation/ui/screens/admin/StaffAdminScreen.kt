@@ -79,7 +79,7 @@ fun StaffAdminScreen(
 
                 items(employees) { employee ->
                     EmployeeAdminCard(employee = employee, onEditClick = {
-                        // TODO: Navegar a pantalla de edición
+                        // NAVEGACION
                     })
                     Spacer(modifier = Modifier.height(12.dp))
                 }

@@ -25,11 +25,11 @@ class StaffViewModel(
             val result = listEmployeeUseCase()
             result
                 .onSuccess {
-                    Log.d("STAFF_VIEWMODEL", "✅ Empleados cargados: ${it.size}")
+                    Log.d("STAFF_VIEWMODEL", "Empleados cargados: ${it.size}")
                     _employees.value = it
                 }
                 .onFailure {
-                    Log.e("STAFF_VIEWMODEL", "❌ Error al cargar empleados: ${it.message}")
+                    Log.e("STAFF_VIEWMODEL", "Error al cargar empleados: ${it.message}")
                 }
         }
     }

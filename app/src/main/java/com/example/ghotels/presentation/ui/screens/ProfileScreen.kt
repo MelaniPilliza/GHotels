@@ -190,7 +190,7 @@ fun ProfileSectionCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally // ✅ centra todo horizontalmente
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(titulo, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF002B50))
             Spacer(modifier = Modifier.height(8.dp))

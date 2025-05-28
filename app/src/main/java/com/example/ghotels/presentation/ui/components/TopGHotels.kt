@@ -52,7 +52,7 @@ fun TopGHotels(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp), // 👈 mueve el contenido hacia abajo
+                .padding(bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(

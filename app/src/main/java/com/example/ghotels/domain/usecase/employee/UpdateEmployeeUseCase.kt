@@ -8,11 +8,11 @@ class UpdateEmployeeUseCase(
     private val repository: EmployeeRepository
 ) {
     suspend operator fun invoke(id: Long, employee: Employee): Result<Unit> {
-        val dto = RegisterEmployeeDto.fromEmployee(employee) // Conversión en el caso de uso
+        val dto = RegisterEmployeeDto.fromEmployee(employee) // Conversion
         return try {
             val response = repository.update(id, dto)
             if (response.isSuccessful) Result.success(Unit)
-            else Result.failure(Exception("Failed to update employee"))
+            else Result.failure(Exception("Error al actualizar empleado"))
         } catch (e: Exception) {
             Result.failure(e)
         }

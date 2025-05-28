@@ -14,11 +14,11 @@ class SaveUserUseCase(private val userDataStore: UserDataStore) {
 
     suspend fun setUser(user: UserDto) {
         _user.value = user
-        userDataStore.saveUser(user) // 🔒 Guardar en persistencia
+        userDataStore.saveUser(user) // Guardar en persistencia
     }
 
     suspend fun loadUser() {
-        _user.value = userDataStore.getUser() // ✅ Cargar al abrir app
+        _user.value = userDataStore.getUser() // Cargar al abrir app
     }
 
     suspend fun clearUser() {

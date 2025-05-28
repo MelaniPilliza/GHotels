@@ -9,7 +9,7 @@ class GetOpenAttendanceUseCase(
 ) {
     suspend operator fun invoke(employeeId: Long): Result<Attendance> {
         return repository.getOpenAttendance(employeeId)
-            .map { it.toAttendance() } // Aquí haces la conversión
+            .map { it.toAttendance() } // Conversion
     }
 }
 

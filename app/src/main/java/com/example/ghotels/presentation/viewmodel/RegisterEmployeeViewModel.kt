@@ -21,10 +21,10 @@ class RegisterEmployeeViewModel(
         viewModelScope.launch {
             val result = registerEmployeeUseCase(employee)
             if (result.isSuccess) {
-                Log.d("REGISTER_EMPLOYEE", "✅ Empleado registrado con éxito")
+                Log.d("REGISTER_EMPLOYEE", "Empleado registrado con éxito")
                 _registrationSuccess.value = true
             } else {
-                Log.e("REGISTER_EMPLOYEE", "❌ Error al registrar empleado", result.exceptionOrNull())
+                Log.e("REGISTER_EMPLOYEE", "Error al registrar empleado", result.exceptionOrNull())
                 _registrationSuccess.value = false
             }
         }

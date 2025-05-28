@@ -79,9 +79,7 @@ class ProfileViewModel(
         }
     }
 
-    /**
-     * Guarda todos los cambios del perfil en el backend
-     */
+
     fun saveChanges() {
         val current = user.value ?: return
 
