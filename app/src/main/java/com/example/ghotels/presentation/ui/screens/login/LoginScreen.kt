@@ -141,7 +141,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TextButton(onClick = {  }) {
+            TextButton(onClick = { navController.navigate(Screen.RecoverPassword.route) }) {
                 Text(
                     text = "¿Olvidaste tu contraseña?",
                     color = Color(0xFF003366)

@@ -1,5 +1,6 @@
 package com.example.ghotels.presentation.ui.screens.admin.officialholiday
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,7 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.example.ghotels.presentation.viewmodel.OfficialHolidayViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Delete
+import com.example.ghotels.data.utils.DateUtils
 import com.example.ghotels.domain.model.OfficialHoliday
+import com.example.ghotels.presentation.navigation.Screen
 
 
 @Composable
@@ -33,17 +37,14 @@ fun OfficialHolidayAdminScreen(
     viewModel: OfficialHolidayViewModel = koinViewModel()
 ) {
     val holidays by viewModel.holidays.collectAsState()
-    val loading by viewModel.loading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val loading by viewModel.loading.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadHolidays()
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50)
-    ) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier
@@ -65,9 +66,9 @@ fun OfficialHolidayAdminScreen(
                             text = "+ Añadir festivo",
                             color = Color(0xFFB3E5FC),
                             fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp,
+                            fontSize = 15.sp,
                             modifier = Modifier.clickable {
-                                navController.navigate("addfestivo")
+                                navController.navigate(Screen.AddOfficialHoliday.route)
                             }
                         )
                     }
@@ -76,87 +77,53 @@ fun OfficialHolidayAdminScreen(
                 }
 
                 when {
-                    loading -> item {
-                        CircularProgressIndicator(color = Color.White)
-                    }
-
+                    loading -> item { CircularProgressIndicator(color = Color.White) }
                     error != null -> item {
-                        Text(
-                            text = error ?: "Error desconocido",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
+                        Text(text = error ?: "Error", color = Color.Red, modifier = Modifier.padding(16.dp))
                     }
-
                     holidays.isEmpty() -> item {
-                        Text(
-                            text = "No hay festivos registrados",
-                            color = Color.White,
-                            modifier = Modifier.padding(16.dp)
-                        )
+                        Text(text = "No hay festivos registrados", color = Color.White, modifier = Modifier.padding(16.dp))
                     }
-
                     else -> items(holidays) { holiday ->
-                        CardOfficialHoliday(
-                            holiday = holiday,
-                            onEditClick = {
-                                //FALTA NAVEGACION
+                        Card(
+                            modifier = Modifier.fillMaxWidth(0.9f),
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(6.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color(0xFFE0E0E0))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.CalendarToday, contentDescription = null, tint = Color(0xFF00556E))
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(holiday.name, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Color.Black)
+                                    Text(DateUtils.fromIsoToEuropean(holiday.date) ?: holiday.date, fontSize = 14.sp, color = Color.Gray)
+                                }
+                                Row(horizontalArrangement = Arrangement.End) {
+                                    IconButton(onClick = {
+                                        navController.navigate(Screen.UpdateOfficialHoliday.createRoute(holiday.id ?: 0L))
+                                    }) {
+                                        Icon(Icons.Default.Edit, contentDescription = null, tint = Color(0xFF2979FF))
+                                    }
+                                    IconButton(onClick = {
+                                        viewModel.deleteHoliday(holiday.id)
+                                    }) {
+                                        Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red)
+                                    }
+                                }
                             }
-                        )
+                        }
                         Spacer(modifier = Modifier.height(12.dp))
                     }
                 }
-
                 item { Spacer(modifier = Modifier.height(100.dp)) }
             }
 
-            MenuGHotels(
-                selectedIndex = 5,
-                navController = navController,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
-
+            MenuGHotels(selectedIndex = 5, navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
             FloatingAdminMenu(navController = navController)
-        }
-    }
-}
-
-@Composable
-fun CardOfficialHoliday(
-    holiday: OfficialHoliday,
-    onEditClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(0.9f),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.CalendarToday,
-                contentDescription = "Holiday",
-                tint = Color(0xFF00556E),
-                modifier = Modifier.size(36.dp)
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = holiday.name, fontWeight = FontWeight.SemiBold)
-                Text(
-                    text = holiday.date,
-                    fontSize = 12.sp,
-                    color = Color.Gray
-                )
-            }
-
-            IconButton(onClick = onEditClick) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color(0xFF007AFF))
-            }
         }
     }
 }

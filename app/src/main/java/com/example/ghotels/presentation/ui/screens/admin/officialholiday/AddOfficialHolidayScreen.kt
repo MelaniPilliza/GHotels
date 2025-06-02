@@ -15,6 +15,8 @@ import com.example.ghotels.presentation.ui.components.TopGHotels
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.example.ghotels.data.utils.DateUtils
+import com.example.ghotels.presentation.navigation.Screen
 import com.example.ghotels.presentation.viewmodel.OfficialHolidayViewModel
 
 @Composable
@@ -24,21 +26,17 @@ fun AddOfficialHolidayScreen(
 ) {
     var name by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
+    val isValid = name.isNotBlank() && DateUtils.isValidDate(date)
 
-    val isValid = name.isNotBlank() && date.isNotBlank()
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50)
-    ) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TopGHotels(title = "New official holiday")
+                TopGHotels(title = "Nuevo festivo")
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Card(
@@ -51,44 +49,54 @@ fun AddOfficialHolidayScreen(
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Holiday name") },
+                            label = { Text("Nombre del festivo") },
                             modifier = Modifier.fillMaxWidth()
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
+                        Spacer(modifier = Modifier.height(12.dp))
                         OutlinedTextField(
                             value = date,
                             onValueChange = { date = it },
-                            label = { Text("Date (YYYY-MM-DD)") },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("e.g. 2025-08-15") }
+                            label = { Text("Fecha (dd/MM/yyyy)") },
+                            modifier = Modifier.fillMaxWidth()
                         )
-
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Button(
-                            onClick = {
-                                viewModel.addHoliday(name, date)
-                                navController.popBackStack()
-                            },
-                            enabled = isValid,
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Save holiday")
+                            OutlinedButton(
+                                onClick = { navController.popBackStack() },
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Volver")
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Button(
+                                onClick = {
+                                    val isoDate = DateUtils.toIsoFormat(date)
+                                    if (isoDate != null) {
+                                        viewModel.addHoliday(name, isoDate)
+                                        navController.navigate(Screen.OfficialHolidayAdmin.route) {
+                                            popUpTo(Screen.OfficialHolidayAdmin.route) { inclusive = true }
+                                        }
+                                    }
+                                },
+                                enabled = isValid,
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Guardar festivo")
+                            }
                         }
                     }
                 }
             }
 
-            MenuGHotels(
-                selectedIndex = 5,
-                navController = navController,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
-
+            MenuGHotels(selectedIndex = 5, navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
             FloatingAdminMenu(navController = navController)
         }
     }
 }
+

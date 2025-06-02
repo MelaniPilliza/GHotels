@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ghotels.presentation.ui.screens.AllOfficialHolidayScreen
 import com.example.ghotels.presentation.ui.screens.AttendanceScreen
 import com.example.ghotels.presentation.ui.screens.BalanceScreen
 import com.example.ghotels.presentation.ui.screens.HomeScreen
@@ -19,14 +20,18 @@ import com.example.ghotels.presentation.ui.screens.admin.role.AddRoleScreen
 import com.example.ghotels.presentation.ui.screens.admin.department.DepartmentAdminScreen
 import com.example.ghotels.presentation.ui.screens.admin.role.RoleAdminScreen
 import com.example.ghotels.presentation.ui.screens.admin.StaffAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.UpdateEmployeeScreen
 import com.example.ghotels.presentation.ui.screens.admin.department.UpdateDepartmentScreen
 import com.example.ghotels.presentation.ui.screens.admin.officialholiday.AddOfficialHolidayScreen
 import com.example.ghotels.presentation.ui.screens.admin.officialholiday.OfficialHolidayAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.officialholiday.UpdateOfficialHolidayScreen
 import com.example.ghotels.presentation.ui.screens.admin.permissionrequest.PermissionRequestAdminScreen
 import com.example.ghotels.presentation.ui.screens.admin.permissiontype.AddPermissionTypeScreen
 import com.example.ghotels.presentation.ui.screens.admin.permissiontype.PermissionTypeAdminScreen
+import com.example.ghotels.presentation.ui.screens.admin.permissiontype.UpdatePermissionTypeScreen
 import com.example.ghotels.presentation.ui.screens.admin.role.UpdateRoleScreen
 import com.example.ghotels.presentation.ui.screens.login.LoginScreen
+import com.example.ghotels.presentation.ui.screens.login.RecoverPasswordScreen
 import com.example.ghotels.presentation.ui.screens.logo.LogoScreen
 
 
@@ -73,6 +78,18 @@ fun NavGraph(startDestination: String = Screen.Login.route) {
             RegisterEmployeeScreen(navController)
         }
 
+        composable(
+            route = Screen.UpdateEmployee.route,
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val idArg = backStackEntry.arguments?.getLong("id") ?: 0L
+            UpdateEmployeeScreen(
+                navController = navController,
+                employeeId = idArg
+            )
+        }
+
+
         composable(Screen.OfficialHolidayAdmin.route) {
             OfficialHolidayAdminScreen(navController)
         }
@@ -81,12 +98,23 @@ fun NavGraph(startDestination: String = Screen.Login.route) {
             AddOfficialHolidayScreen(navController)
         }
 
-        composable(Screen.PermissionAdmin.route) {
+        composable(Screen.UpdateOfficialHoliday.route) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull()
+            UpdateOfficialHolidayScreen(navController, holidayId = id)
+        }
+
+
+        composable(Screen.PermissionTypeAdmin.route) {
             PermissionTypeAdminScreen(navController)
         }
 
-        composable(Screen.AddPermission.route) {
+        composable(Screen.AddPermissionType.route) {
             AddPermissionTypeScreen(navController)
+        }
+
+        composable(Screen.UpdatePermissionType.route) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull()
+            UpdatePermissionTypeScreen(navController, id)
         }
 
         composable(Screen.RoleAdmin.route) {
@@ -124,6 +152,13 @@ fun NavGraph(startDestination: String = Screen.Login.route) {
             UpdateDepartmentScreen(navController, id)
         }
 
+        composable(Screen.AllOfficialHoliday.route) {
+            AllOfficialHolidayScreen(navController)
+        }
+
+        composable(Screen.RecoverPassword.route) {
+            RecoverPasswordScreen(navController = navController)
+        }
 
     }
 }

@@ -57,7 +57,7 @@ fun PermissionRequestScreen(
         permissionRequestViewModel.loadBalances(employeeId)
     }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,

@@ -23,6 +23,7 @@ import com.example.ghotels.presentation.ui.components.MenuGHotels
 import com.example.ghotels.presentation.ui.components.TopGHotels
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -41,9 +42,13 @@ fun StaffAdminScreen(
 ) {
     val employees by viewModel.employees.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadEmployees()
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50)
+        color = Color(0xFF002A3D)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -55,7 +60,6 @@ fun StaffAdminScreen(
                 item {
                     TopGHotels(title = "Empleados")
                     Spacer(modifier = Modifier.height(8.dp))
-
 
                     Row(
                         modifier = Modifier
@@ -78,11 +82,18 @@ fun StaffAdminScreen(
                 }
 
                 items(employees) { employee ->
-                    EmployeeAdminCard(employee = employee, onEditClick = {
-                        // NAVEGACION
-                    })
+                    EmployeeAdminCard(
+                        employee = employee,
+                        onEditClick = {
+                            navController.navigate(Screen.UpdateEmployee.createRoute(employee.id ?: 0L))
+                        },
+                        onDeleteClick = {
+                            viewModel.deleteEmployee(employee.id!!)
+                        }
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
+
 
                 item { Spacer(modifier = Modifier.height(100.dp)) }
             }
@@ -98,9 +109,12 @@ fun StaffAdminScreen(
     }
 }
 
-
 @Composable
-fun EmployeeAdminCard(employee: UserDto, onEditClick: () -> Unit) {
+fun EmployeeAdminCard(
+    employee: UserDto,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(16.dp),
@@ -133,11 +147,14 @@ fun EmployeeAdminCard(employee: UserDto, onEditClick: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "${employee.firstName} ${employee.lastName}", fontWeight = FontWeight.Medium)
                 Text(text = employee.role.orEmpty(), fontSize = 12.sp, color = Color.Gray)
-
             }
 
             IconButton(onClick = onEditClick) {
                 Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color(0xFF007AFF))
+            }
+
+            IconButton(onClick = onDeleteClick) {
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = Color(0xFFFF3B30))
             }
         }
     }

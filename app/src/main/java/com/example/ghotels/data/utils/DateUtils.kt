@@ -38,4 +38,16 @@ object DateUtils {
             null
         }
     }
+
+    fun fromIsoToEuropean(input: String): String? {
+        return try {
+            val isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val europeanFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val date = LocalDate.parse(input.substring(0, 10), isoFormatter)
+            date.format(europeanFormatter)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 }

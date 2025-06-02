@@ -61,9 +61,9 @@ fun FloatingAdminMenu(
                 ) {
                     AdminMenuItem("ROLES") { navController.navigate(Screen.RoleAdmin.route) }
                     AdminMenuItem("DEPARTAMENTOS") {  navController.navigate(Screen.DepartmentAdmin.route)}
-                    AdminMenuItem("FESTIVOS") { navController.navigate("festivoadmin") }
-                    AdminMenuItem("EMPLEADOS") { navController.navigate("staffadmin") }
-                    AdminMenuItem("PERMISOS") { navController.navigate("permissionadmin") }
+                    AdminMenuItem("FESTIVOS") {  navController.navigate(Screen.OfficialHolidayAdmin.route)}
+                    AdminMenuItem("EMPLEADOS") { navController.navigate(Screen.StaffAdmin.route) }
+                    AdminMenuItem("PERMISOS") { navController.navigate(Screen.PermissionTypeAdmin.route) }
                     AdminMenuItem("SOLICITUDES DE PERMISOS") { navController.navigate("permissionrequestadmin") }
                 }
             }

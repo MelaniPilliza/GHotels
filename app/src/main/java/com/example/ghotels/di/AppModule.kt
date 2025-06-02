@@ -5,6 +5,7 @@ import com.example.ghotels.data.repository.AttendanceRepository
 import com.example.ghotels.data.repository.DepartmentRepository
 import com.example.ghotels.data.repository.EmployeeRepository
 import com.example.ghotels.data.repository.OfficialHolidayRepository
+import com.example.ghotels.data.repository.PasswordResetTokenRepository
 import com.example.ghotels.data.repository.PermissionRequestRepository
 import com.example.ghotels.data.repository.RoleRepository
 import com.example.ghotels.data.repository.PermissionTypeRepository
@@ -23,12 +24,16 @@ import com.example.ghotels.domain.usecase.employee.SaveUserUseCase
 import com.example.ghotels.domain.usecase.employee.UpdateProfileUseCase
 import com.example.ghotels.domain.usecase.department.DeleteDepartmentUseCase
 import com.example.ghotels.domain.usecase.department.UpdateDepartmentUseCase
+import com.example.ghotels.domain.usecase.employee.DeleteEmployeeUseCase
+import com.example.ghotels.domain.usecase.employee.GetEmployeeByIdUseCase
 import com.example.ghotels.domain.usecase.employee.ListEmployeeUseCase
 import com.example.ghotels.domain.usecase.employee.UpdateEmployeeUseCase
 import com.example.ghotels.domain.usecase.officialholiday.AddOfficialHolidayUseCase
 import com.example.ghotels.domain.usecase.officialholiday.DeleteOfficialHolidayUseCase
 import com.example.ghotels.domain.usecase.officialholiday.ListOfficialHolidayUseCase
 import com.example.ghotels.domain.usecase.officialholiday.UpdateOfficialHolidayUseCase
+import com.example.ghotels.domain.usecase.password.RecoverPasswordUseCase
+import com.example.ghotels.domain.usecase.password.ResetPasswordUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.AddPermissionRequestUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.ApprovePermissionRequestUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.GetPermissionBalancesUseCase
@@ -47,6 +52,7 @@ import com.example.ghotels.presentation.viewmodel.HomeViewModel
 import com.example.ghotels.presentation.viewmodel.PermissionRequestViewModel
 import com.example.ghotels.presentation.viewmodel.PermissionTypeViewModel
 import com.example.ghotels.presentation.viewmodel.ProfileViewModel
+import com.example.ghotels.presentation.viewmodel.RecoverPasswordViewModel
 import com.example.ghotels.presentation.viewmodel.RoleViewModel
 import com.example.ghotels.presentation.viewmodel.StaffViewModel
 import com.example.ghotels.presentation.viewmodel.login.LoginViewModel
@@ -63,6 +69,7 @@ val appModule = module {
     single { PermissionTypeRepository(get()) }
     single { AttendanceRepository(get()) }
     single { PermissionRequestRepository(get()) }
+    single { PasswordResetTokenRepository(get()) }
 
     // CASOS DE USO ----------------------------------------
 
@@ -76,6 +83,10 @@ val appModule = module {
     single { RegisterEmployeeUseCase(get()) }
     single { UpdateEmployeeUseCase(get()) }
     single { UpdateProfileUseCase(get()) }
+    single { DeleteEmployeeUseCase(get()) }
+    single { GetEmployeeByIdUseCase(get()) }
+
+
 
     //-- Festivos oficiales
     single { ListOfficialHolidayUseCase(get()) }
@@ -116,6 +127,10 @@ val appModule = module {
     single { GetOpenAttendanceUseCase(get()) }
 
 
+    //-- Recuperación de contraseña
+    single { RecoverPasswordUseCase(get()) }
+    single { ResetPasswordUseCase(get()) }
+
 
     // VIEWMODELS ------------------------------------------
     viewModel { LoginViewModel(get(), get()) }
@@ -123,10 +138,11 @@ val appModule = module {
     viewModel { OfficialHolidayViewModel(get(), get(), get(), get()) }
     viewModel { PermissionTypeViewModel(get(), get(), get(), get()) }
     viewModel { AttendanceViewModel(get(), get(), get()) }
-    viewModel { StaffViewModel(get()) }
+    viewModel { StaffViewModel(get() ,get() ,get() ,get())}
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { RegisterEmployeeViewModel(get()) }
     viewModel { RoleViewModel(get(), get(), get(), get()) }
     viewModel { DepartmentViewModel(get(), get(), get(), get()) }
     viewModel { PermissionRequestViewModel(get(),get(),get(),get(),get(), get()) }
+    viewModel { RecoverPasswordViewModel(get(), get()) }
 }

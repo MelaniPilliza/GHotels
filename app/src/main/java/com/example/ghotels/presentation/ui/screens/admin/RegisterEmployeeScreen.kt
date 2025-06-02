@@ -46,6 +46,7 @@ fun RegisterEmployeeScreen(
 ) {
     val roles by roleViewModel.roles.collectAsState()
     val departments by departmentViewModel.departments.collectAsState()
+    val registrationSuccess by viewModel.registrationSuccess.collectAsState()
 
     var nombre by remember { mutableStateOf("") }
     var apellidos by remember { mutableStateOf("") }
@@ -69,6 +70,12 @@ fun RegisterEmployeeScreen(
             numeroSS.isNotBlank() && fechaNacimiento.isNotBlank() &&
             fechaIngreso.isNotBlank() && tipoContrato.isNotBlank() &&
             horasDiarias.isNotBlank() && selectedRole != null && selectedDepartment != null
+
+    if (registrationSuccess == true) {
+        LaunchedEffect(true) {
+            navController.popBackStack()
+        }
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
         Box(modifier = Modifier.fillMaxSize()) {

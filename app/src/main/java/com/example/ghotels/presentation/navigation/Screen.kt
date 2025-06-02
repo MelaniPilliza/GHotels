@@ -2,33 +2,38 @@ package com.example.ghotels.presentation.navigation
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
+    object RecoverPassword : Screen("recoverpassword")
     object Logo : Screen("logo")
 
     object Home : Screen("home/{role}") {
         fun createRoute(role: String) = "home/$role"
     }
 
-    object OfficialHoliday : Screen("officialholiday")
     object Attendance : Screen("attendance")
     object Balance : Screen("balance")
     object Staff : Screen("staff")
     object Profile : Screen("profile")
+    object AllOfficialHoliday : Screen("allofficialholidays")
 
     // Admin Screens
     object StaffAdmin : Screen("staffadmin")
-    object RegisterEmployee : Screen("addemployee")
-
-    object PermissionAdmin : Screen("permissionadmin")
-    object AddPermission : Screen("addpermission")
-    object EditPermission : Screen("editpermission/{id}") {
-        fun createRoute(id: Long) = "editpermission/$id"
+    object RegisterEmployee : Screen("staffadmin/register")
+    object UpdateEmployee : Screen("staffadmin/update/{id}") {
+        fun createRoute(id: Long): String = "staffadmin/update/$id"
     }
 
-    object OfficialHolidayAdmin : Screen("officialholidayadmin")
-    object AddOfficialHoliday : Screen("addofficialholiday")
-    object EditOfficialHoliday : Screen("editofficialholiday/{id}") {
-        fun createRoute(id: Long) = "editofficialholiday/$id"
+    object PermissionTypeAdmin : Screen("permissiontypes")
+    object AddPermissionType : Screen("permissiontypes/add")
+    object UpdatePermissionType : Screen("permissiontypes/update/{id}") {
+        fun createRoute(id: Long) = "permissiontypes/update/$id"
     }
+
+    object OfficialHolidayAdmin : Screen("holidays")
+    object AddOfficialHoliday : Screen("holidays/add")
+    object UpdateOfficialHoliday : Screen("holidays/update/{id}") {
+        fun createRoute(id: Long): String = "holidays/update/$id"
+    }
+
 
     object RoleAdmin : Screen("roles")
     object AddRole : Screen("roles/add")

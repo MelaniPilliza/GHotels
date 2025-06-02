@@ -1,5 +1,7 @@
 package com.example.ghotels.data.model
 
+import com.example.ghotels.domain.model.Employee
+
 data class UserDto(
     val id: Long?,
     val firstName: String,
@@ -26,3 +28,4 @@ data class UserDto(
     val attendances: List<AttendanceDto> = emptyList(),
     val permissions: List<PermissionRequestDto> = emptyList()
 )
+

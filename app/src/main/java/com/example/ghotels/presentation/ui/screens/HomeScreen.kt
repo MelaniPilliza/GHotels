@@ -2,12 +2,14 @@ package com.example.ghotels.presentation.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Work
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import com.example.ghotels.domain.model.OfficialHoliday
+import com.example.ghotels.presentation.navigation.Screen
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Locale
@@ -70,7 +73,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     ProfileCard(fullName = fullName, role = role)
                     Spacer(modifier = Modifier.height(24.dp))
-                    HolidayCard(holidays)
+                    HolidayCard(holidays, navController)
                     Spacer(modifier = Modifier.height(24.dp))
                     AbsenceCard(navController)
                 }
@@ -132,7 +135,10 @@ fun ProfileCard(fullName: String, role: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HolidayCard(holidays: List<OfficialHoliday>) {
+fun HolidayCard(
+    holidays: List<OfficialHoliday>,
+    navController: NavController
+) {
     val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val locale = Locale("es", "ES")
 
@@ -150,8 +156,20 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Festivos", fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Color.White)
-                Text("Ver todos >", fontSize = 15.sp, color = Color(0xFF4FC3F7))
+                Text(
+                    "Festivos",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = Color.White
+                )
+                Text(
+                    "Ver todos >",
+                    fontSize = 15.sp,
+                    color = Color(0xFF4FC3F7),
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.AllOfficialHoliday.route)
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -159,7 +177,8 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
             holidays.sortedBy { it.date }.take(4).forEach { holiday ->
                 val date = inputFormat.parse(holiday.date)
                 val calendar = Calendar.getInstance().apply { time = date!! }
-                val month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, locale)?.uppercase() ?: ""
+                val month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, locale)
+                    ?.uppercase() ?: ""
                 val day = calendar.get(Calendar.DAY_OF_MONTH).toString()
 
                 Row(
@@ -179,7 +198,12 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
-                        Text(holiday.name, fontWeight = FontWeight.Medium, fontSize = 16.sp, color = Color.White)
+                        Text(
+                            holiday.name,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
                         Text("Día no laborable", fontSize = 14.sp, color = Color.Gray)
                     }
                 }
@@ -187,6 +211,7 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
         }
     }
 }
+
 
 @Composable
 fun AbsenceCard(navController: NavController) {

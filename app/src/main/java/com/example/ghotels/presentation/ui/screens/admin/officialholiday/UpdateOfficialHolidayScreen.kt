@@ -1,14 +1,17 @@
-package com.example.ghotels.presentation.ui.screens.admin.department
+package com.example.ghotels.presentation.ui.screens.admin.officialholiday
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ghotels.presentation.ui.components.FloatingAdminMenu
 import com.example.ghotels.presentation.ui.components.MenuGHotels
@@ -16,16 +19,32 @@ import com.example.ghotels.presentation.ui.components.TopGHotels
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.items
+import com.example.ghotels.data.utils.DateUtils
 import com.example.ghotels.presentation.navigation.Screen
-import com.example.ghotels.presentation.viewmodel.DepartmentViewModel
+import com.example.ghotels.presentation.viewmodel.OfficialHolidayViewModel
+import com.example.ghotels.presentation.viewmodel.RoleViewModel
 
 @Composable
-fun AddDepartmentScreen(
+fun UpdateOfficialHolidayScreen(
     navController: NavController,
-    viewModel: DepartmentViewModel = koinViewModel()
+    holidayId: Long?,
+    viewModel: OfficialHolidayViewModel = koinViewModel()
 ) {
+    val holidays by viewModel.holidays.collectAsState()
+    val currentHoliday = remember(holidays) { holidays.find { it.id == holidayId } }
+
     var name by remember { mutableStateOf("") }
-    val isValid = name.isNotBlank()
+    var date by remember { mutableStateOf("") }
+    val isValid = name.isNotBlank() && DateUtils.isValidDate(date)
+
+    LaunchedEffect(currentHoliday) {
+        currentHoliday?.let {
+            name = it.name
+            date = DateUtils.fromIsoToEuropean(it.date) ?: ""
+        }
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -35,7 +54,7 @@ fun AddDepartmentScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TopGHotels(title = "Nuevo Departamento")
+                TopGHotels(title = "Editar festivo")
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Card(
@@ -48,10 +67,16 @@ fun AddDepartmentScreen(
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Nombre del departamento") },
+                            label = { Text("Nombre del festivo") },
                             modifier = Modifier.fillMaxWidth()
                         )
-
+                        Spacer(modifier = Modifier.height(12.dp))
+                        OutlinedTextField(
+                            value = date,
+                            onValueChange = { date = it },
+                            label = { Text("Fecha (dd/MM/yyyy)") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Row(
@@ -60,38 +85,32 @@ fun AddDepartmentScreen(
                         ) {
                             OutlinedButton(
                                 onClick = { navController.popBackStack() },
-                                border = BorderStroke(1.dp, Color.Gray),
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text("Volver")
                             }
-
                             Spacer(modifier = Modifier.width(16.dp))
-
                             Button(
                                 onClick = {
-                                    viewModel.addDepartment(name)
-                                    navController.navigate(Screen.DepartmentAdmin.route) {
-                                        popUpTo(Screen.DepartmentAdmin.route) { inclusive = true }
+                                    val isoDate = DateUtils.toIsoFormat(date)
+                                    if (isoDate != null) {
+                                        viewModel.updateHoliday(holidayId, name, isoDate)
+                                        navController.popBackStack()
                                     }
                                 },
                                 enabled = isValid,
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text("Guardar")
+                                Text("Guardar cambios")
                             }
                         }
                     }
                 }
             }
 
-            MenuGHotels(
-                selectedIndex = 5,
-                navController = navController,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+            MenuGHotels(selectedIndex = 5, navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
             FloatingAdminMenu(navController = navController)
         }
     }

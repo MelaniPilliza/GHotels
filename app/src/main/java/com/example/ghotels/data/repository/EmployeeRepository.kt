@@ -2,6 +2,7 @@ package com.example.ghotels.data.repository
 
 import com.example.ghotels.data.model.LoginDto
 import com.example.ghotels.data.model.RegisterEmployeeDto
+import com.example.ghotels.data.model.UpdateEmployeeDto
 import com.example.ghotels.data.model.UserDto
 import com.example.ghotels.data.source.remote.EmployeeServiceClient
 import com.example.ghotels.domain.model.Employee
@@ -16,7 +17,9 @@ class EmployeeRepository(private val service: EmployeeServiceClient) {
 
     suspend fun register(dto: RegisterEmployeeDto): Response<Unit> = service.register(dto)
 
-    suspend fun update(id: Long, dto: RegisterEmployeeDto): Response<Unit> = service.update(id, dto)
+    suspend fun update(id: Long, dto: UpdateEmployeeDto): Response<UserDto> =
+        service.update(id, dto)
+
 
     suspend fun getAll(): List<UserDto> = service.getEmployees()
 
@@ -24,5 +27,10 @@ class EmployeeRepository(private val service: EmployeeServiceClient) {
         service.updateProfile(id, dto)
         Unit
     }
+
+    suspend fun delete(id: Long): Response<Unit> = service.deleteEmployee(id)
+
+    suspend fun getById(id: Long): Result<UserDto> = runCatching { service.getEmployeeById(id) }
+
 }
 

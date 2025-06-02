@@ -4,6 +4,7 @@ import com.example.ghotels.data.source.remote.AttendanceServiceClient
 import com.example.ghotels.data.source.remote.DepartmentServiceClient
 import com.example.ghotels.data.source.remote.EmployeeServiceClient
 import com.example.ghotels.data.source.remote.OfficialHolidayServiceClient
+import com.example.ghotels.data.source.remote.PasswordResetTokenServiceClient
 import com.example.ghotels.data.source.remote.PermissionRequestServiceClient
 import com.example.ghotels.data.source.remote.RoleServiceClient
 import com.example.ghotels.data.source.remote.PermissionTypeServiceClient
@@ -51,5 +52,9 @@ val retrofitModule = module {
 
     single<PermissionRequestServiceClient> {
         get<Retrofit>().create(PermissionRequestServiceClient::class.java) // ← NUEVO
+    }
+
+    single<PasswordResetTokenServiceClient> {
+        get<Retrofit>().create(PasswordResetTokenServiceClient::class.java)
     }
 }
