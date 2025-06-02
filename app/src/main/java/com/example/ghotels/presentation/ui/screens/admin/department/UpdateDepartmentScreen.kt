@@ -2,13 +2,17 @@ package com.example.ghotels.presentation.ui.screens.admin.department
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ghotels.presentation.ui.components.FloatingAdminMenu
 import com.example.ghotels.presentation.ui.components.MenuGHotels
@@ -20,12 +24,22 @@ import com.example.ghotels.presentation.navigation.Screen
 import com.example.ghotels.presentation.viewmodel.DepartmentViewModel
 
 @Composable
-fun AddDepartmentScreen(
+fun UpdateDepartmentScreen(
     navController: NavController,
+    departmentId: Long?,
     viewModel: DepartmentViewModel = koinViewModel()
 ) {
+    val departments by viewModel.departments.collectAsState()
+    val currentDepartment = remember(departments) { departments.find { it.id == departmentId } }
+
     var name by remember { mutableStateOf("") }
     val isValid = name.isNotBlank()
+
+    LaunchedEffect(currentDepartment) {
+        currentDepartment?.let {
+            name = it.name
+        }
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -35,7 +49,7 @@ fun AddDepartmentScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TopGHotels(title = "Nuevo Departamento")
+                TopGHotels(title = "Editar Departamento")
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Card(
@@ -54,10 +68,7 @@ fun AddDepartmentScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             OutlinedButton(
                                 onClick = { navController.popBackStack() },
                                 border = BorderStroke(1.dp, Color.Gray),
@@ -68,7 +79,7 @@ fun AddDepartmentScreen(
 
                             Button(
                                 onClick = {
-                                    viewModel.addDepartment(name)
+                                    viewModel.updateDepartment(departmentId, name)
                                     navController.navigate(Screen.DepartmentAdmin.route) {
                                         popUpTo(Screen.DepartmentAdmin.route) { inclusive = true }
                                     }
@@ -76,7 +87,7 @@ fun AddDepartmentScreen(
                                 enabled = isValid,
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("Guardar")
+                                Text("Guardar cambios")
                             }
                         }
                     }

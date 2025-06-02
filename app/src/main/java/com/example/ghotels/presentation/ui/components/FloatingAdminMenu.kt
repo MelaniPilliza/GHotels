@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.ghotels.presentation.navigation.Screen
 
 @Composable
 fun FloatingAdminMenu(
@@ -50,7 +51,7 @@ fun FloatingAdminMenu(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 18.dp, bottom = 77.dp),
+                .padding(end = 18.dp, bottom = 82.dp),
             horizontalAlignment = Alignment.End
         ) {
             AnimatedVisibility (visible = expandido) {
@@ -58,8 +59,8 @@ fun FloatingAdminMenu(
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                     horizontalAlignment = Alignment.End
                 ) {
-                    AdminMenuItem("ROLES") { navController.navigate("roleadmin") }
-                    AdminMenuItem("DEPARTAMENTOS") { navController.navigate("departmentadmin") }
+                    AdminMenuItem("ROLES") { navController.navigate(Screen.RoleAdmin.route) }
+                    AdminMenuItem("DEPARTAMENTOS") {  navController.navigate(Screen.DepartmentAdmin.route)}
                     AdminMenuItem("FESTIVOS") { navController.navigate("festivoadmin") }
                     AdminMenuItem("EMPLEADOS") { navController.navigate("staffadmin") }
                     AdminMenuItem("PERMISOS") { navController.navigate("permissionadmin") }
@@ -70,7 +71,7 @@ fun FloatingAdminMenu(
             FloatingActionButton(
                 onClick = { expandido = !expandido },
                 shape = CircleShape,
-                containerColor = if (expandido) Color(0xFF002B50) else Color(0xFF007AFF),
+                containerColor = if (expandido) Color(0xFF002B50) else Color(0xFFFFC107),
                 elevation = FloatingActionButtonDefaults.elevation(6.dp)
             ) {
                 Icon(

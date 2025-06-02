@@ -22,20 +22,33 @@ import com.example.ghotels.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.style.TextOverflow
-import com.example.ghotels.data.model.PermissionTypeDto
+import com.example.ghotels.data.model.PermissionBalanceDto
 import com.example.ghotels.domain.model.PermissionType
+import com.example.ghotels.presentation.viewmodel.HomeViewModel
+import com.example.ghotels.presentation.viewmodel.PermissionRequestViewModel
 
 
 @Composable
-fun PermissionScreen(
+fun BalanceScreen(
     navController: NavController,
-    permissionViewModel: PermissionTypeViewModel = koinViewModel()
+    permissionViewModel: PermissionTypeViewModel = koinViewModel(),
+    permissionRequestViewModel: PermissionRequestViewModel = koinViewModel(),
+    homeViewModel: HomeViewModel = koinViewModel()
 ) {
     val permissionTypes by permissionViewModel.permissionTypes.collectAsState()
+    val balances by permissionRequestViewModel.balances.collectAsState()
+    val user by homeViewModel.user.collectAsState()
+
+    val employeeId = user?.id ?: return
+
+    // CARGAR SALDOS
+    LaunchedEffect(employeeId) {
+        permissionRequestViewModel.loadBalances(employeeId)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50)
+        color = Color(0xFF002A3D)
     ) {
         Box {
             LazyColumn(
@@ -49,7 +62,7 @@ fun PermissionScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    PermissionTypeCard(permissionTypes = permissionTypes)
+                    PermissionTypeCard(permissionTypes, balances)
 
                     Spacer(modifier = Modifier.height(40.dp))
                 }
@@ -64,8 +77,12 @@ fun PermissionScreen(
     }
 }
 
+
 @Composable
-fun PermissionTypeCard(permissionTypes: List<PermissionType>) {
+fun PermissionTypeCard(
+    permissionTypes: List<PermissionType>,
+    balances: List<PermissionBalanceDto>
+) {
     Card(
         modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(16.dp),
@@ -94,14 +111,10 @@ fun PermissionTypeCard(permissionTypes: List<PermissionType>) {
                         Text(text = type.name, fontSize = 16.sp, color = Color.Black)
                     }
 
-                    val diasTexto = if (type.unlimited) {
-                        "Ilimitado"
-                    } else {
-                        "Quedan ${type.annualAvailableDays ?: 0} días"
-                    }
+                    val balanceText = balances.find { it.type == type.name }?.balance ?: "Cargando..."
 
                     Text(
-                        text = diasTexto,
+                        text = balanceText,
                         fontSize = 14.sp,
                         color = Color.Gray,
                         maxLines = 1,
@@ -120,11 +133,4 @@ fun PermissionTypeCard(permissionTypes: List<PermissionType>) {
 
 
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PermissionScreenPreview() {
-    AppTheme {
-        val navController = rememberNavController()
-        PermissionScreen(navController = navController)
-    }
-}
+

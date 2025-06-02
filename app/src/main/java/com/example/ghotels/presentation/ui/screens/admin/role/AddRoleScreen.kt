@@ -15,6 +15,7 @@ import com.example.ghotels.presentation.ui.components.TopGHotels
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.example.ghotels.presentation.navigation.Screen
 import com.example.ghotels.presentation.viewmodel.RoleViewModel
 
 @Composable
@@ -26,7 +27,7 @@ fun AddRoleScreen(
     var description by remember { mutableStateOf("") }
     val isValid = name.isNotBlank()
 
-    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
@@ -62,16 +63,34 @@ fun AddRoleScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Button(
-                            onClick = {
-                                viewModel.addRole(name, description)
-                                navController.popBackStack()
-                            },
-                            enabled = isValid,
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Guardar rol")
+                            OutlinedButton(
+                                onClick = { navController.popBackStack() },
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Volver")
+                            }
+
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Button(
+                                onClick = {
+                                    viewModel.addRole(name, description)
+                                    navController.navigate(Screen.RoleAdmin.route) {
+                                        popUpTo(Screen.RoleAdmin.route) { inclusive = true }
+                                    }
+
+                                },
+                                enabled = isValid,
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Guardar rol")
+                            }
                         }
                     }
                 }
@@ -86,3 +105,5 @@ fun AddRoleScreen(
         }
     }
 }
+
+

@@ -49,7 +49,7 @@ fun StaffScreen(
                     .background(Color.White)
             ) {
                 LaunchedEffect(empleados) {
-                    Log.d("STAFF_SCREEN", "📦 Empleados recibidos en UI: ${empleados.size}")
+                    Log.d("STAFF_SCREEN", "Empleados recibidos: ${empleados.size}")
                 }
 
                 LazyColumn(
@@ -88,7 +88,7 @@ fun EmployeeCard(empleado: UserDto) {
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF00556E)),
+                .background(Color(0xFF061E33)),
             contentAlignment = Alignment.Center
         ) {
             Text(

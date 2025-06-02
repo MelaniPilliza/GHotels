@@ -1,5 +1,6 @@
 package com.example.ghotels.data.source.remote
 
+import com.example.ghotels.data.model.PermissionBalanceDto
 import com.example.ghotels.data.model.PermissionRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -23,4 +24,8 @@ interface PermissionRequestServiceClient {
 
     @PUT("/api/solicitudes/rechazar/{id}")
     suspend fun reject(@Path("id") id: Long): Response<Unit>
+
+    @GET("/api/solicitudes/saldo/empleado/{empleadoId}")
+    suspend fun getBalances(@Path("empleadoId") empleadoId: Long): List<PermissionBalanceDto>
+
 }

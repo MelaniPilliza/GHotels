@@ -1,5 +1,6 @@
 package com.example.ghotels.data.repository
 
+import com.example.ghotels.data.model.PermissionBalanceDto
 import com.example.ghotels.data.model.PermissionRequestDto
 import com.example.ghotels.data.source.remote.PermissionRequestServiceClient
 import kotlinx.coroutines.Dispatchers
@@ -31,4 +32,9 @@ class PermissionRequestRepository(
     suspend fun reject(id: Long): Boolean {
         return serviceClient.reject(id).isSuccessful
     }
+
+    suspend fun getBalances(employeeId: Long): Result<List<PermissionBalanceDto>> = runCatching {
+        serviceClient.getBalances(employeeId)
+    }
+
 }

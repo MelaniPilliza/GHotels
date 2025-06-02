@@ -31,6 +31,7 @@ import com.example.ghotels.domain.usecase.officialholiday.ListOfficialHolidayUse
 import com.example.ghotels.domain.usecase.officialholiday.UpdateOfficialHolidayUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.AddPermissionRequestUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.ApprovePermissionRequestUseCase
+import com.example.ghotels.domain.usecase.permissionrequest.GetPermissionBalancesUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.ListEmployeePermissionRequestsUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.ListPermissionRequestUseCase
 import com.example.ghotels.domain.usecase.permissionrequest.RejectPermissionRequestUseCase
@@ -106,6 +107,8 @@ val appModule = module {
     single { ListEmployeePermissionRequestsUseCase(get()) }
     single { ApprovePermissionRequestUseCase(get()) }
     single { RejectPermissionRequestUseCase(get()) }
+    single { GetPermissionBalancesUseCase(get()) }
+
 
     //-- Asistencia
     single { ListAttendanceUseCase(get()) }
@@ -125,5 +128,5 @@ val appModule = module {
     viewModel { RegisterEmployeeViewModel(get()) }
     viewModel { RoleViewModel(get(), get(), get(), get()) }
     viewModel { DepartmentViewModel(get(), get(), get(), get()) }
-    viewModel { PermissionRequestViewModel(get(),get(),get(),get(),get()) }
+    viewModel { PermissionRequestViewModel(get(),get(),get(),get(),get(), get()) }
 }

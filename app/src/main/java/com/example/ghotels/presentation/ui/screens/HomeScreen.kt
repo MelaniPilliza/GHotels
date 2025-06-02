@@ -31,10 +31,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import com.example.ghotels.domain.model.OfficialHoliday
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Locale
+
+
+
 
 @Composable
 fun HomeScreen(
@@ -52,27 +57,27 @@ fun HomeScreen(
         officialHolidayViewModel.loadHolidays()
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50)
-    ) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 70.dp),
+                    .padding(bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
                     TopGHotels(title = "Hola $firstName")
-                    Spacer(modifier = Modifier.height(20.dp))
-                    ProfileCard(fullName = fullName, role = role, modifier = Modifier.fillMaxWidth(0.9f))
-                    Spacer(modifier = Modifier.height(20.dp))
-                    HolidayCard(holidays = holidays)
-                    Spacer(modifier = Modifier.height(20.dp))
-                    AbsenceCard(navController = navController)
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
+                    ProfileCard(fullName = fullName, role = role)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    HolidayCard(holidays)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    AbsenceCard(navController)
                 }
+            }
+
+            if (role == "ADMIN" || role == "RRHH") {
+                FloatingAdminMenu(navController = navController)
             }
 
             MenuGHotels(
@@ -80,63 +85,48 @@ fun HomeScreen(
                 navController = navController,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
-
-            if (role == "ADMIN" || role == "RRHH") {
-                FloatingAdminMenu(navController = navController)
-            }
         }
     }
 }
 
 @Composable
 fun ProfileCard(fullName: String, role: String, modifier: Modifier = Modifier) {
-    val parts = fullName.split(" ")
-    val initials = buildString {
-        append(parts.getOrNull(0)?.firstOrNull() ?: "")
-        append(parts.getOrNull(1)?.firstOrNull() ?: "")
-    }.uppercase()
+    val initials = fullName.split(" ")
+        .mapNotNull { it.firstOrNull()?.toString() }
+        .take(2)
+        .joinToString("")
+        .uppercase()
 
     Card(
-        modifier = modifier.fillMaxWidth(0.9f),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp)
+            .height(100.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF061E33)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        border = BorderStroke(1.dp, Color(0xFF1F3C5E))
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(60.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFBC02D)),
+                    .background(Color(0xFF3F2DB6)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = initials,
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(text = initials, fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Color.White)
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            Text(
-                text = fullName,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = Color.Black
-            )
-
-            Text(
-                text = role,
-                fontSize = 12.sp,
-                color = Color.Gray
-            )
+            Column {
+                Text(text = fullName, fontWeight = FontWeight.SemiBold, fontSize = 17.sp, color = Color.White)
+                Text(text = role, fontSize = 14.sp, color = Color(0xFFB0BEC5))
+            }
         }
     }
 }
@@ -147,17 +137,21 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
     val locale = Locale("es", "ES")
 
     Card(
-        modifier = Modifier.fillMaxWidth(0.9f),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF061E33)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        border = BorderStroke(1.dp, Color(0xFF1F3C5E))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Festivos", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                Text("Ver todos >", fontSize = 13.sp, color = Color(0xFF003366))
+                Text("Festivos", fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Color.White)
+                Text("Ver todos >", fontSize = 15.sp, color = Color(0xFF4FC3F7))
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -165,29 +159,28 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
             holidays.sortedBy { it.date }.take(4).forEach { holiday ->
                 val date = inputFormat.parse(holiday.date)
                 val calendar = Calendar.getInstance().apply { time = date!! }
-
                 val month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, locale)?.uppercase() ?: ""
                 val day = calendar.get(Calendar.DAY_OF_MONTH).toString()
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier.padding(vertical = 6.dp)
                 ) {
                     Column(
                         modifier = Modifier
                             .width(40.dp)
-                            .background(Color(0xFFD32F2F), shape = RoundedCornerShape(4.dp)),
+                            .background(Color(0xFFEF5350), shape = RoundedCornerShape(6.dp)),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(month, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
-                        Text(day, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+                        Text(month, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(day, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
-                        Text(holiday.name, fontWeight = FontWeight.SemiBold)
-                        Text("Día no laborable", fontSize = 12.sp, color = Color.Gray)
+                        Text(holiday.name, fontWeight = FontWeight.Medium, fontSize = 16.sp, color = Color.White)
+                        Text("Día no laborable", fontSize = 14.sp, color = Color.Gray)
                     }
                 }
             }
@@ -198,16 +191,20 @@ fun HolidayCard(holidays: List<OfficialHoliday>) {
 @Composable
 fun AbsenceCard(navController: NavController) {
     Card(
-        modifier = Modifier.fillMaxWidth(0.9f),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF061E33)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        border = BorderStroke(1.dp, Color(0xFF1F3C5E))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = "Próximas ausencias",
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp,
-                color = Color.Black
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
+                color = Color.White
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -219,13 +216,13 @@ fun AbsenceCard(navController: NavController) {
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(Color(0x1AFF0000), shape = RoundedCornerShape(8.dp)),
+                        .background(Color(0xFF4FC3F7), shape = RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Work,
                         contentDescription = null,
-                        tint = Color(0xFF003366)
+                        tint = Color.White
                     )
                 }
 
@@ -234,13 +231,13 @@ fun AbsenceCard(navController: NavController) {
                 Column {
                     Text(
                         text = "Planifica tus próximas ausencias",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.Black
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
+                        color = Color.White
                     )
                     Text(
-                        text = "Haz click en 'Solicitar ausencia'",
-                        fontSize = 12.sp,
+                        text = "Haz clic en 'Solicitar ausencia'",
+                        fontSize = 14.sp,
                         color = Color.Gray
                     )
                 }
@@ -248,20 +245,19 @@ fun AbsenceCard(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedButton(
+            Button(
                 onClick = { navController.navigate("permissionrequest") },
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .width(200.dp),
-                border = BorderStroke(1.dp, Color.Black)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4FC3F7))
             ) {
-                Text("Solicitar ausencia", color = Color.Black)
+                Text("Solicitar ausencia", fontSize = 15.sp, color = Color.Black)
             }
         }
     }
 }
-
 
 
 

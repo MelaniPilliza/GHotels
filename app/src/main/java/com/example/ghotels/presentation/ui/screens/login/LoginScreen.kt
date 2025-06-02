@@ -112,7 +112,7 @@ fun LoginScreen(
             Button(
                 onClick = { loginViewModel.doLogin() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF003366),
+                    containerColor = Color(0xFF061E33),
                     contentColor = Color.White
                 ),
                 modifier = Modifier

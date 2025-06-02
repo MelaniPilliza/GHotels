@@ -1,5 +1,6 @@
 package com.example.ghotels.presentation.ui.screens.admin.role
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.PeopleOutline
+import com.example.ghotels.presentation.navigation.Screen
 import com.example.ghotels.presentation.viewmodel.RoleViewModel
+
 
 @Composable
 fun RoleAdminScreen(
@@ -35,7 +42,7 @@ fun RoleAdminScreen(
         viewModel.loadRoles()
     }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier
@@ -57,9 +64,9 @@ fun RoleAdminScreen(
                             text = "+ Añadir rol",
                             color = Color(0xFFB3E5FC),
                             fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp,
+                            fontSize = 15.sp,
                             modifier = Modifier.clickable {
-                                navController.navigate("addrole")
+                                navController.navigate(Screen.AddRole.route)
                             }
                         )
                     }
@@ -90,20 +97,64 @@ fun RoleAdminScreen(
 
                     else -> items(roles) { role ->
                         Card(
-                            modifier = Modifier
-                                .fillMaxWidth(0.9f),
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(2.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                            modifier = Modifier.fillMaxWidth(0.9f),
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color(0xFFE0E0E0))
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(text = role.name, fontWeight = FontWeight.Bold)
-                                if (role.description.isNotBlank()) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PeopleOutline,
+                                    contentDescription = "Rol",
+                                    tint = Color(0xFF00556E)
+                                )
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = role.description,
-                                        fontSize = 12.sp,
-                                        color = Color.Gray
+                                        text = role.name,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 17.sp,
+                                        color = Color.Black
                                     )
+                                    if (role.description.isNotBlank()) {
+                                        Text(
+                                            text = role.description,
+                                            fontSize = 14.sp,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                }
+
+                                Row(
+                                    modifier = Modifier.weight(0.3f),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    IconButton(
+                                        onClick = { navController.navigate(Screen.UpdateRole.createRoute(role.id ?: 0L)) },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Editar Rol",
+                                            tint = Color(0xFF2979FF)
+                                        )
+                                    }
+
+                                    IconButton(onClick = {
+                                        viewModel.deleteRole(role.id)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Eliminar rol",
+                                            tint = Color.Red
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -123,4 +174,3 @@ fun RoleAdminScreen(
         }
     }
 }
-

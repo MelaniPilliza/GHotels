@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.example.ghotels.presentation.ui.components.MenuGHotels
 import com.example.ghotels.presentation.ui.components.TopGHotels
 import androidx.compose.material3.Card
@@ -23,17 +22,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.ghotels.data.utils.DateUtils
-import com.example.ghotels.domain.model.PermissionRequest
 import com.example.ghotels.domain.model.PermissionType
 import com.example.ghotels.presentation.viewmodel.HomeViewModel
 import com.example.ghotels.presentation.viewmodel.PermissionRequestViewModel
 import com.example.ghotels.presentation.viewmodel.PermissionTypeViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.util.*
 
 @Composable
 fun PermissionRequestScreen(
@@ -46,6 +42,7 @@ fun PermissionRequestScreen(
     val user by homeViewModel.user.collectAsState()
     val employeeId = user?.id ?: return
 
+    val balances by permissionRequestViewModel.balances.collectAsState()
     var selectedType by remember { mutableStateOf<PermissionType?>(null) }
     var fromDate by remember { mutableStateOf("") }
     var toDate by remember { mutableStateOf("") }
@@ -54,6 +51,11 @@ fun PermissionRequestScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    // CARGAR SALDOS
+    LaunchedEffect(employeeId) {
+        permissionRequestViewModel.loadBalances(employeeId)
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -107,6 +109,17 @@ fun PermissionRequestScreen(
                                         )
                                     }
                                 }
+                            }
+
+                            // MOSTRAR SALDO
+                            selectedType?.let { tipo ->
+                                val balanceText = balances.find { it.type == tipo.name }?.balance ?: "Cargando..."
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Saldo disponible: $balanceText",
+                                    color = Color(0xFF00556E),
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))
@@ -206,4 +219,5 @@ fun PermissionRequestScreen(
         }
     }
 }
+
 

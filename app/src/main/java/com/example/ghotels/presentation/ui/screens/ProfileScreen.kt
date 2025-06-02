@@ -51,7 +51,7 @@ fun ProfileScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF002B50)
+        color = Color(0xFF002A3D)
     ) {
         Box {
             LazyColumn(

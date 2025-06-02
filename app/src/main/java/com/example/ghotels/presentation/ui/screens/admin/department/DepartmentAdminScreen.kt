@@ -1,4 +1,6 @@
 package com.example.ghotels.presentation.ui.screens.admin.department
+
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.HomeWork
+import com.example.ghotels.presentation.navigation.Screen
 import com.example.ghotels.presentation.viewmodel.DepartmentViewModel
 
 @Composable
@@ -36,7 +41,7 @@ fun DepartmentAdminScreen(
         viewModel.loadDepartments()
     }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002B50)) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier
@@ -60,7 +65,7 @@ fun DepartmentAdminScreen(
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
                             modifier = Modifier.clickable {
-                                navController.navigate("adddepartment")
+                                navController.navigate(Screen.AddDepartment.route)
                             }
                         )
                     }
@@ -92,9 +97,10 @@ fun DepartmentAdminScreen(
                     else -> items(departments) { dep ->
                         Card(
                             modifier = Modifier.fillMaxWidth(0.9f),
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(2.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color(0xFFE0E0E0))
                         ) {
                             Row(
                                 modifier = Modifier.padding(16.dp),
@@ -105,8 +111,47 @@ fun DepartmentAdminScreen(
                                     contentDescription = "Departamento",
                                     tint = Color(0xFF00556E)
                                 )
+
                                 Spacer(modifier = Modifier.width(12.dp))
-                                Text(text = dep.name, fontWeight = FontWeight.Bold)
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = dep.name,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 17.sp,
+                                        color = Color.Black
+                                    )
+                                }
+
+                                Row(
+                                    modifier = Modifier.weight(0.3f),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            navController.navigate(
+                                                Screen.UpdateDepartment.createRoute(dep.id ?: 0L)
+                                            )
+                                        },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Editar Departamento",
+                                            tint = Color(0xFF2979FF)
+                                        )
+                                    }
+
+                                    IconButton(onClick = {
+                                        viewModel.deleteDepartment(dep.id)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Eliminar Departamento",
+                                            tint = Color.Red
+                                        )
+                                    }
+                                }
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))

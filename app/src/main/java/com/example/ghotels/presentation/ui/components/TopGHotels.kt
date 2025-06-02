@@ -31,6 +31,7 @@ import java.util.Date
 import java.util.Locale
 
 
+
 @Composable
 fun TopGHotels(
     title: String,
@@ -39,34 +40,18 @@ fun TopGHotels(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF00556E),
-                        Color(0xFF002B50)
-                    )
-                )
-            )
+            .height(130.dp)
+            .background(Color(0xFF002A3D))
     ) {
         Column(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
+                .align(Alignment.Center)
+                .padding(top = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = date,
-                fontSize = 12.sp,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = title,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            Text(text = "$date", fontSize = 12.sp, color = Color(0xFFB0BEC5))
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 }

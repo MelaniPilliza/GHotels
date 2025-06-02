@@ -56,7 +56,7 @@ fun AttendanceScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = Color(0xFF002B50)
+            color = Color(0xFF002A3D)
         ) {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,7 +138,7 @@ fun AttendanceScreen(
                                     },
                                     modifier = Modifier.align(Alignment.CenterHorizontally),
                                     enabled = reason.isNotBlank(),
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00556E)),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF002A3D)),
                                     shape = RoundedCornerShape(20.dp)
                                 ) {
                                     Text("Enviar", color = Color.White)

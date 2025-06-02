@@ -9,8 +9,12 @@ import com.example.ghotels.domain.usecase.permissionrequest.ListPermissionReques
 import com.example.ghotels.domain.usecase.permissionrequest.RejectPermissionRequestUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ghotels.data.model.PermissionBalanceDto
 import com.example.ghotels.data.utils.DateUtils
 import com.example.ghotels.domain.model.PermissionRequest
+import com.example.ghotels.domain.usecase.permissionrequest.GetPermissionBalancesUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -22,7 +26,8 @@ class PermissionRequestViewModel(
     private val listAllRequestsUseCase: ListPermissionRequestUseCase,
     private val listEmployeeRequestsUseCase: ListEmployeePermissionRequestsUseCase,
     private val approveRequestUseCase: ApprovePermissionRequestUseCase,
-    private val rejectRequestUseCase: RejectPermissionRequestUseCase
+    private val rejectRequestUseCase: RejectPermissionRequestUseCase,
+    private val getPermissionBalancesUseCase: GetPermissionBalancesUseCase
 ) : ViewModel() {
 
     private val _requests = mutableStateOf<List<PermissionRequest>>(emptyList())
@@ -33,6 +38,10 @@ class PermissionRequestViewModel(
 
     private val _error = mutableStateOf<String?>(null)
     val error: State<String?> = _error
+
+    private val _balances = MutableStateFlow<List<PermissionBalanceDto>>(emptyList())
+    val balances: StateFlow<List<PermissionBalanceDto>> = _balances
+
 
     // DATEUTILS
     private fun convertToIsoDateTime(dateStr: String): String? {
@@ -65,8 +74,14 @@ class PermissionRequestViewModel(
             permissionTypeId = permissionTypeId,
             employeeId = employeeId
         )
-        return addRequestUseCase(request)
+        val success = addRequestUseCase(request)
+        if (success) {
+            // 🔁 Cargar balances después de crear
+            loadBalances(employeeId)
+        }
+        return success
     }
+
 
     fun loadRequestsByEmployee(employeeId: Long) {
         viewModelScope.launch {
@@ -94,13 +109,14 @@ class PermissionRequestViewModel(
         }
     }
 
-    fun approveRequest(id: Long) {
+    fun approveRequest(id: Long, employeeId: Long) {
         viewModelScope.launch {
             val success = approveRequestUseCase(id)
             if (success) {
                 _requests.value = _requests.value.map {
                     if (it.id == id) it.copy(status = "APPROVED") else it
                 }
+                loadBalances(employeeId)
             }
         }
     }
@@ -112,6 +128,16 @@ class PermissionRequestViewModel(
                 _requests.value = _requests.value.map {
                     if (it.id == id) it.copy(status = "REJECTED") else it
                 }
+            }
+        }
+    }
+
+    fun loadBalances(employeeId: Long) {
+        viewModelScope.launch {
+            getPermissionBalancesUseCase(employeeId).onSuccess {
+                _balances.value = it
+            }.onFailure {
+                _error.value = it.message
             }
         }
     }

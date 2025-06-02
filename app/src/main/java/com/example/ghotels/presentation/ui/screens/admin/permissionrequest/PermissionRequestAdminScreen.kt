@@ -83,16 +83,22 @@ fun PermissionRequestAdminScreen(
                         )
                     }
 
-                    else -> items(items = requests) { req ->
+                    else -> items(requests) { req ->
                         PermissionRequestCard(
                             request = req,
-                            onApprove = { viewModel.approveRequest(req.id!!) },
-                            onReject = { viewModel.rejectRequest(req.id!!) }
+                            onApprove = {
+                                if (req.id != null && req.employeeId != null) {
+                                    viewModel.approveRequest(req.id, req.employeeId)
+                                }
+                            },
+                            onReject = {
+                                if (req.id != null) {
+                                    viewModel.rejectRequest(req.id)
+                                }
+                            }
                         )
                     }
-
                 }
-
 
                 item { Spacer(modifier = Modifier.height(100.dp)) }
             }
@@ -107,6 +113,7 @@ fun PermissionRequestAdminScreen(
         }
     }
 }
+
 
 @Composable
 fun PermissionRequestCard(

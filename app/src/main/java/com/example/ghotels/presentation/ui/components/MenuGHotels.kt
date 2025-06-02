@@ -63,7 +63,7 @@ fun MenuGHotels(
                     contentDescription = "Inicio",
                     tint = if (selectedIndex == 0) Color(0xFF0576CE) else Color.Black
                 )
-                Text("Inicio", fontSize = 10.sp, color = if (selectedIndex == 0) Color(0xFF0576CE) else Color.Black)
+                Text("Inicio", fontSize = 10.sp, color = if (selectedIndex == 0) Color(0xFF002A3D) else Color.Black)
             }
 
             // PERMISOS
@@ -73,7 +73,7 @@ fun MenuGHotels(
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        navController.navigate(Screen.Permission.route) {
+                        navController.navigate(Screen.Balance.route) {
                             popUpTo(0)
                             launchSingleTop = true
                         }
@@ -84,7 +84,7 @@ fun MenuGHotels(
                     contentDescription = "Permisos",
                     tint = if (selectedIndex == 1) Color(0xFF0576CE) else Color.Black
                 )
-                Text("Permisos", fontSize = 10.sp, color = if (selectedIndex == 1) Color(0xFF0576CE) else Color.Black)
+                Text("Permisos", fontSize = 10.sp, color = if (selectedIndex == 1) Color(0xFF002A3D) else Color.Black)
             }
 
             // ASISTENCIAS
@@ -105,7 +105,7 @@ fun MenuGHotels(
                     contentDescription = "Asistencias",
                     tint = if (selectedIndex == 2) Color(0xFF0576CE) else Color.Black
                 )
-                Text("Asistencias", fontSize = 10.sp, color = if (selectedIndex == 2) Color(0xFF0576CE) else Color.Black)
+                Text("Asistencias", fontSize = 10.sp, color = if (selectedIndex == 2) Color(0xFF002A3D) else Color.Black)
             }
 
             // EMPLEADOS
@@ -126,7 +126,7 @@ fun MenuGHotels(
                     contentDescription = "Empleados",
                     tint = if (selectedIndex == 3) Color(0xFF0576CE) else Color.Black
                 )
-                Text("Empleados", fontSize = 10.sp, color = if (selectedIndex == 3) Color(0xFF0576CE) else Color.Black)
+                Text("Empleados", fontSize = 10.sp, color = if (selectedIndex == 3) Color(0xFF002A3D) else Color.Black)
             }
 
             // PERFIL
@@ -147,7 +147,7 @@ fun MenuGHotels(
                     contentDescription = "Perfil",
                     tint = if (selectedIndex == 4) Color(0xFF0576CE) else Color.Black
                 )
-                Text("Perfil", fontSize = 10.sp, color = if (selectedIndex == 4) Color(0xFF0576CE) else Color.Black)
+                Text("Perfil", fontSize = 10.sp, color = if (selectedIndex == 4) Color(0xFF002A3D) else Color.Black)
             }
         }
     }
