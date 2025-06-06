@@ -48,65 +48,95 @@ fun UpdateOfficialHolidayScreen(
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TopGHotels(title = "Editar festivo")
-                Spacer(modifier = Modifier.height(16.dp))
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text("Nombre del festivo") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        OutlinedTextField(
-                            value = date,
-                            onValueChange = { date = it },
-                            label = { Text("Fecha (dd/MM/yyyy)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
+                item {
+                    TopGHotels(title = "Editar festivo")
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            OutlinedButton(
-                                onClick = { navController.popBackStack() },
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Volver")
+
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = CardDefaults.cardElevation(4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            // Nombre del festivo
+                            OutlinedTextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                label = { Text("Nombre del festivo") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // Fecha en formato dd/MM/yyyy, marcando error si no es válido
+                            OutlinedTextField(
+                                value = date,
+                                onValueChange = { date = it },
+                                label = { Text("Fecha (dd/MM/yyyy)") },
+                                modifier = Modifier.fillMaxWidth(),
+                                isError = date.isNotBlank() && !DateUtils.isValidDate(date)
+                            )
+
+                            // Mensaje de error bajo el campo fecha
+                            if (date.isNotBlank() && !DateUtils.isValidDate(date)) {
+                                Text(
+                                    text = "Formato inválido. Usa dd/MM/yyyy.",
+                                    color = Color.Red,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
                             }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Button(
-                                onClick = {
-                                    val isoDate = DateUtils.toIsoFormat(date)
-                                    if (isoDate != null) {
-                                        viewModel.updateHoliday(holidayId, name, isoDate)
-                                        navController.popBackStack()
-                                    }
-                                },
-                                enabled = isValid,
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.weight(1f)
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Guardar cambios")
+                                OutlinedButton(
+                                    onClick = { navController.popBackStack() },
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Volver")
+                                }
+
+                                Spacer(modifier = Modifier.width(16.dp))
+
+                                Button(
+                                    onClick = {
+                                        val isoDate = DateUtils.toIsoFormat(date)
+                                        if (isoDate != null) {
+                                            viewModel.updateHoliday(holidayId, name.trim(), isoDate)
+                                            navController.popBackStack()
+                                        }
+                                    },
+                                    enabled = isValid,
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Guardar cambios")
+                                }
                             }
                         }
                     }
+                }
+
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
 

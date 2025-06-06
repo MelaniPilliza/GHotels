@@ -8,7 +8,7 @@ class UpdateOfficialHolidayUseCase(
     private val repository: OfficialHolidayRepository
 ) {
     suspend operator fun invoke(holiday: OfficialHoliday): Boolean {
-        val id = holiday.id ?: return false // No se puede actualizar sin ID
+        val id = holiday.id ?: return false
         val dto = OfficialHolidayDto.from(holiday)
         return repository.update(id, dto)
     }

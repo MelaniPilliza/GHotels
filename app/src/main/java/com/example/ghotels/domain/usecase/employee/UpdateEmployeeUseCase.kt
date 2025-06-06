@@ -9,7 +9,7 @@ import retrofit2.Response
 class UpdateEmployeeUseCase(
     private val repository: EmployeeRepository
 ) {
-    // Ahora recibe UpdateEmployeeDto y retorna Response<UserDto>
+    // Recibe UpdateEmployeeDto y retorna Response<UserDto>
     suspend operator fun invoke(id: Long, dto: UpdateEmployeeDto): Response<UserDto> {
         return repository.update(id, dto)
     }

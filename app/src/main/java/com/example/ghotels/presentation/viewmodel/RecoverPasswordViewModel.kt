@@ -13,30 +13,60 @@ class RecoverPasswordViewModel(
     private val resetUseCase: ResetPasswordUseCase
 ) : ViewModel() {
 
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
+
+    private val _token = MutableStateFlow("")
+    val token: StateFlow<String> = _token
+
+    private val _newPassword = MutableStateFlow("")
+    val newPassword: StateFlow<String> = _newPassword
+
+    //LOGICA DE RECUPERACION
+    // Estado de carga durante el envío del correo con el token de recuperación
     private val _loadingRecovery = MutableStateFlow(false)
     val loadingRecovery: StateFlow<Boolean> = _loadingRecovery
 
+    // Indica si el envío del correo de recuperación fue exitoso o error
     private val _successRecovery = MutableStateFlow<Boolean?>(null)
     val successRecovery: StateFlow<Boolean?> = _successRecovery
-
     private val _errorRecovery = MutableStateFlow<String?>(null)
     val errorRecovery: StateFlow<String?> = _errorRecovery
 
+    //LOGCA DE RESTABLECIMIENTO
+    // Estado de carga durante el restablecimiento de contraseña con el token
     private val _loadingReset = MutableStateFlow(false)
     val loadingReset: StateFlow<Boolean> = _loadingReset
 
+    // Indica si el restablecimiento de contraseña fue exitoso o error
     private val _successReset = MutableStateFlow<Boolean?>(null)
     val successReset: StateFlow<Boolean?> = _successReset
-
     private val _errorReset = MutableStateFlow<String?>(null)
     val errorReset: StateFlow<String?> = _errorReset
 
-    fun recover(email: String) {
+
+    fun updateEmail(newEmail: String) {
+        _email.value = newEmail
+    }
+
+    fun updateToken(newToken: String) {
+        _token.value = newToken
+    }
+
+    fun updateNewPassword(newPwd: String) {
+        _newPassword.value = newPwd
+    }
+
+
+
+    //RECUPERACION DE CONTRASEÑA
+    fun recover() {
+        val currentEmail = _email.value.trim()
         viewModelScope.launch {
             _loadingRecovery.value = true
             _errorRecovery.value = null
             try {
-                val success = recoverUseCase(email)
+                val success = recoverUseCase(currentEmail)
                 if (success) {
                     _successRecovery.value = true
                 } else {
@@ -52,12 +82,15 @@ class RecoverPasswordViewModel(
         }
     }
 
-    fun reset(token: String, newPassword: String) {
+    //RESTABLECER CONTRASEÑA
+    fun reset() {
+        val currentToken = _token.value.trim()
+        val currentNewPassword = _newPassword.value.trim()
         viewModelScope.launch {
             _loadingReset.value = true
             _errorReset.value = null
             try {
-                val success = resetUseCase(token, newPassword)
+                val success = resetUseCase(currentToken, currentNewPassword)
                 if (success) {
                     _successReset.value = true
                 } else {

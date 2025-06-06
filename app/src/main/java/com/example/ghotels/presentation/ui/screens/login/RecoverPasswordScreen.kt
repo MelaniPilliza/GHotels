@@ -33,6 +33,11 @@ fun RecoverPasswordScreen(
     viewModel: RecoverPasswordViewModel = koinViewModel(),
     navController: NavController
 ) {
+
+    val email by viewModel.email.collectAsState()
+    val token by viewModel.token.collectAsState()
+    val newPassword by viewModel.newPassword.collectAsState()
+
     // Estado para el envío del código
     val isLoadingRecovery by viewModel.loadingRecovery.collectAsState()
     val successRecovery by viewModel.successRecovery.collectAsState()
@@ -43,13 +48,8 @@ fun RecoverPasswordScreen(
     val successReset by viewModel.successReset.collectAsState()
     val errorReset by viewModel.errorReset.collectAsState()
 
-    // Campos de formulario
-    var email by remember { mutableStateOf("") }
-    var token by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-    var newPasswordVisible by remember { mutableStateOf(false) }
 
-    // Si ya se envió el correo correctamente, mostramos la parte de “restablecer contraseña”
+    // Si ya se envió el correo correctamente, mostramos “restablecer contraseña”
     if (successRecovery == true && successReset != true) {
         Column(
             modifier = Modifier
@@ -67,9 +67,10 @@ fun RecoverPasswordScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
+            // Input “token”
             OutlinedTextField(
                 value = token,
-                onValueChange = { token = it },
+                onValueChange = { viewModel.updateToken(it) },
                 label = { Text("Código (token)") },
                 singleLine = true,
                 modifier = Modifier
@@ -78,24 +79,21 @@ fun RecoverPasswordScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Input “newPassword”
+            var newPasswordVisible by remember { mutableStateOf(false) }
             OutlinedTextField(
                 value = newPassword,
-                onValueChange = { newPassword = it },
+                onValueChange = { viewModel.updateNewPassword(it) },
                 label = { Text("Nueva contraseña") },
                 singleLine = true,
-                visualTransformation = if (newPasswordVisible) VisualTransformation.None
+                visualTransformation = if (newPasswordVisible)
+                    VisualTransformation.None
                 else PasswordVisualTransformation(),
                 trailingIcon = {
-                    val image = if (newPasswordVisible)
-                        Icons.Default.VisibilityOff
-                    else Icons.Default.Visibility
-
+                    val icon = if (newPasswordVisible)
+                        Icons.Default.VisibilityOff else Icons.Default.Visibility
                     IconButton(onClick = { newPasswordVisible = !newPasswordVisible }) {
-                        Icon(
-                            imageVector = image,
-                            contentDescription = if (newPasswordVisible) "Ocultar contraseña"
-                            else "Mostrar contraseña"
-                        )
+                        Icon(imageVector = icon, contentDescription = null)
                     }
                 },
                 modifier = Modifier
@@ -104,14 +102,14 @@ fun RecoverPasswordScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
 
+            //  Mensaje de error si existe
             if (errorReset != null) {
                 Text(errorReset!!, color = Color.Red, modifier = Modifier.padding(bottom = 8.dp))
             }
 
+            // Botón “Restablecer contraseña”
             Button(
-                onClick = {
-                    viewModel.reset(token.trim(), newPassword.trim())
-                },
+                onClick = { viewModel.reset() },
                 enabled = token.isNotBlank() && newPassword.isNotBlank() && !isLoadingReset,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,17 +123,18 @@ fun RecoverPasswordScreen(
                 if (isLoadingReset) {
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
                 } else {
-                    Text(text = "Restablecer contraseña")
+                    Text("Restablecer contraseña")
                 }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+
             TextButton(onClick = { navController.popBackStack() }) {
-                Text(text = "Volver al inicio de sesión", color = Color(0xFF005288))
+                Text("Volver al inicio de sesión", color = Color(0xFF005288))
             }
         }
 
-        // Si el restablecimiento fue exitoso, volvemos al login
+        // Cuando el restablecimiento sea exitoso, regresamos al login
         LaunchedEffect(successReset) {
             if (successReset == true) {
                 navController.popBackStack()
@@ -143,7 +142,8 @@ fun RecoverPasswordScreen(
         }
 
     } else {
-        // —— PRIMER PASO: Enviar código al email ——
+
+        //  PRIMER PASO: Enviar código al email
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -167,9 +167,10 @@ fun RecoverPasswordScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
+            // Input email
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { viewModel.updateEmail(it) },
                 label = { Text("Correo electrónico") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -179,14 +180,14 @@ fun RecoverPasswordScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Mensaje de error si existe
             if (errorRecovery != null) {
                 Text(errorRecovery!!, color = Color.Red, modifier = Modifier.padding(bottom = 8.dp))
             }
 
+            // Botón “Enviar código”
             Button(
-                onClick = {
-                    viewModel.recover(email.trim())
-                },
+                onClick = { viewModel.recover() },
                 enabled = email.isNotBlank() && !isLoadingRecovery,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -200,20 +201,19 @@ fun RecoverPasswordScreen(
                 if (isLoadingRecovery) {
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
                 } else {
-                    Text(text = "Enviar código")
+                    Text("Enviar código")
                 }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+
             TextButton(onClick = { navController.popBackStack() }) {
-                Text(text = "Volver al inicio de sesión", color = Color(0xFF005288))
+                Text("Volver al inicio de sesión", color = Color(0xFF005288))
             }
         }
 
-        // Cuando se complete el envío, el Composable se recompone y mostrará la segunda parte
-        LaunchedEffect(successRecovery) {
-            // No hace falta acción adicional: la recomposición mostrará el bloque superior
-        }
+        // Al completarse el envío, Compose reconstituirá el bloque anterior automáticamente
+        LaunchedEffect(successRecovery) {}
     }
 }
 

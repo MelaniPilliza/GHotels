@@ -43,56 +43,72 @@ fun UpdateDepartmentScreen(
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF002A3D)) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TopGHotels(title = "Editar Departamento")
-                Spacer(modifier = Modifier.height(16.dp))
+                item {
+                    TopGHotels(title = "Editar Departamento")
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text("Nombre del departamento") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = CardDefaults.cardElevation(4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            OutlinedTextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                label = { Text("Nombre del departamento") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(24.dp))
 
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            OutlinedButton(
-                                onClick = { navController.popBackStack() },
-                                border = BorderStroke(1.dp, Color.Gray),
-                                shape = RoundedCornerShape(12.dp)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Volver")
-                            }
+                                OutlinedButton(
+                                    onClick = { navController.popBackStack() },
+                                    border = BorderStroke(1.dp, Color.Gray),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Volver")
+                                }
 
-                            Button(
-                                onClick = {
-                                    viewModel.updateDepartment(departmentId, name)
-                                    navController.navigate(Screen.DepartmentAdmin.route) {
-                                        popUpTo(Screen.DepartmentAdmin.route) { inclusive = true }
-                                    }
-                                },
-                                enabled = isValid,
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text("Guardar cambios")
+                                Spacer(modifier = Modifier.width(16.dp))
+
+                                Button(
+                                    onClick = {
+                                        viewModel.updateDepartment(departmentId, name.trim())
+                                        navController.navigate(Screen.DepartmentAdmin.route) {
+                                            popUpTo(Screen.DepartmentAdmin.route) { inclusive = true }
+                                        }
+                                    },
+                                    enabled = isValid,
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Guardar cambios")
+                                }
                             }
                         }
                     }
                 }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
+
 
             MenuGHotels(
                 selectedIndex = 5,

@@ -45,9 +45,28 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel = koinViewModel()
 ) {
     val usuario by profileViewModel.user.collectAsState()
+
+    LaunchedEffect(usuario) {
+        if (usuario == null) {
+            navController.navigate("login") {
+                popUpTo("profile") { inclusive = true }
+            }
+        }
+    }
+    if (usuario == null) {
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.White)
+        }
+        return
+    }
+
     val editandoPerfil = remember { mutableStateOf(false) }
     val editandoDireccion = remember { mutableStateOf(false) }
     val editandoContacto = remember { mutableStateOf(false) }
+
 
     Surface(
         modifier = Modifier.fillMaxSize(),

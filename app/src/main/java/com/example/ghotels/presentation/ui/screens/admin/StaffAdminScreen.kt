@@ -25,6 +25,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -94,7 +98,6 @@ fun StaffAdminScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                 }
 
-
                 item { Spacer(modifier = Modifier.height(100.dp)) }
             }
 
@@ -115,46 +118,194 @@ fun EmployeeAdminCard(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+    // Estado local para controlar si la tarjeta está expandida o no
+    var expanded by remember { mutableStateOf(false) }
+
     Card(
-        modifier = Modifier.fillMaxWidth(0.9f),
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .clickable { expanded = !expanded },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+        Column {
+            // --- Fila superior con avatar, nombre/rol y botones ---
+            Row(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF00556E)),
-                contentAlignment = Alignment.Center
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = listOf(employee.firstName, employee.lastName)
-                        .flatMap { it.split(" ") }
-                        .take(2)
-                        .joinToString("") { it.firstOrNull()?.uppercase() ?: "" },
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
+                // Avatar con iniciales
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF00556E)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = listOf(employee.firstName, employee.lastName)
+                            .flatMap { it.split(" ") }
+                            .take(2)
+                            .joinToString("") { it.firstOrNull()?.uppercase() ?: "" },
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "${employee.firstName} ${employee.lastName}",
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = employee.role.orEmpty(),
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+
+                IconButton(onClick = onEditClick) {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = "Editar",
+                        tint = Color(0xFF007AFF)
+                    )
+                }
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Eliminar",
+                        tint = Color(0xFFFF3B30)
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            // --- Sección expandida: teléfono, correo, dirección y contacto de emergencia ---
+            if (expanded) {
+                Divider(color = Color.LightGray, thickness = 1.dp)
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = "${employee.firstName} ${employee.lastName}", fontWeight = FontWeight.Medium)
-                Text(text = employee.role.orEmpty(), fontSize = 12.sp, color = Color.Gray)
-            }
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+                    // 1) TELÉFONO
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = "Teléfono",
+                            tint = Color(0xFF00556E),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = employee.phone,
+                            fontSize = 14.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
 
-            IconButton(onClick = onEditClick) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color(0xFF007AFF))
-            }
+                    // 2) CORREO
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Correo",
+                            tint = Color(0xFF00556E),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = employee.email,
+                            fontSize = 14.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
 
-            IconButton(onClick = onDeleteClick) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = Color(0xFFFF3B30))
+                    // 3) DIRECCIÓN (si existe)
+                    employee.address?.let { addr ->
+                        Divider(color = Color.LightGray, thickness = 1.dp)
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Dirección",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = Color(0xFF00556E)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Calle y número (si lo tienes en street)
+                        Text(
+                            text = addr.street,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "${addr.postalCode}, ${addr.city}",
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = addr.country,
+                            fontSize = 14.sp
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    // 4) CONTACTO DE EMERGENCIA (si existe)
+                    employee.emergencyContact?.let { ec ->
+                        Divider(color = Color.LightGray, thickness = 1.dp)
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Contacto de emergencia",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = Color(0xFF00556E)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Nombre
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Nombre contacto",
+                                tint = Color(0xFF00556E),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = ec.name,
+                                fontSize = 14.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Relación (opcional)
+                        if (ec.relationship.isNotBlank()) {
+                            Text(
+                                text = "Relación: ${ec.relationship}",
+                                fontSize = 14.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+
+                        // Teléfono del contacto
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.PhoneAndroid,
+                                contentDescription = "Teléfono contacto",
+                                tint = Color(0xFF00556E),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = ec.phone,
+                                fontSize = 14.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                }
             }
         }
     }
